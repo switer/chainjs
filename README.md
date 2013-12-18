@@ -1,7 +1,7 @@
 chainjs
 =======
 
-Chaining of functions call to resolve the problem of javascript async callback handle
+Chaining of functions call to resolve the problem of javascript async callback handling.
 
 ## Install
 
