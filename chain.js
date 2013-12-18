@@ -1,23 +1,31 @@
 var _ = require('underscore');
 
 var util = {
+
+    // 批处理handler数组
     batch: function (handlers/*, params*/) {
-        var args = Array.prototype.slice.call(arguments);
+        var args = this.slice(arguments);
         args.shift();
         _.each(handlers, function (handler) {
             handler && handler.apply(this, args);
         });
+    },
+    // 封装Array.slice
+    slice: function (array) {
+        return Array.prototype.slice.call(array);
     }
 }
 
 module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
+
     var chainHandlers = [],
         chainEndHandlers = [],
         isEnd = false,
-        args = Array.prototype.slice.call(arguments),
+        args = util.slice(arguments),
         startParams = [],
         _data = {};
 
+    // 链调用结束的拦截器
     function filter () {
         return isEnd;
     }
@@ -38,7 +46,7 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
 
             var handler = chainHandlers.shift();
             var handlerArgs = [],
-                argParams = Array.prototype.slice.call(arguments);
+                argParams = util.slice(arguments);
             
             handlerArgs.push(chain);
             handlerArgs = handlerArgs.concat(argParams);
@@ -85,16 +93,23 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
                 return _data;
             }
         },
-        filter: function () {
-            
+        // 每个链节点的拦截方法
+        filter: function (filterHandler) {
+            // TBD
+            return chain;
         },
-        before: function () {
-            
+        // 每个链节点handler的函数切面-before
+        before: function (beforeHandler) {
+            // TBD
+            return chain;
         },
-        after: function () {
-            
+        // 每个链节点handler的函数切面-after
+        after: function (afterHandler) {
+            // TBD
+            return chain;
         }
     }
+    // 修理初始参数
     args.shift();
     startParams.push(chain);
     startParams = startParams.concat(args);

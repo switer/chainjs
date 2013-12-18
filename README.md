@@ -31,6 +31,52 @@ Chain(beginStep, param)
     });
 ```
 
+## API
+
+### Chain()
+```javascript
+Chain(func, param)
+```
+### then()
+```javascript
+Chain(func).then(func1).then(func2)
+```
+### start()
+```javascript
+Chain(func).then(func1).then(func2).start();
+```
+
+### next()
+### end()
+### final()
+
+### data()
+Saving data in current chain
+```javascript
+Chain(function (chain, param) {
+    chain.data('param', param);
+}, {data: ''})
+    .then(function (chain) {
+        var param = chain.data('param');
+
+        console.log(param); // {data:''}
+    })
+    .start();
+```
+### filter()
+TBD
+### before()
+TBD
+### after()
+TBD
+
+
+## Testing
+
+```bash
+npm test
+```
+
 ## Example
 
 ```javascript
