@@ -33,16 +33,13 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
     var chain = {
         // 添加下一处理方法
         then: function (handler) {
-            if (filter()) return;
 
             chainHandlers.push(handler);
             return chain;
         },
         // 请求调用下一处理方法
         next: function () {
-            if (filter()) return;
-
-            if (isEnd) return;
+            if (filter()) return chain;
 
             var handler = chainHandlers.shift();
             var handlerArgs = [],
@@ -60,7 +57,6 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
         },
         // 链处理结束后始终执行的方法
         final: function (handler) {
-            if (filter()) return;
 
             chainEndHandlers.push(handler);
             return chain;
@@ -75,7 +71,7 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
         },
         // 开始执行链处理
         start: function () {
-            if (filter()) return;
+            
             if (startHandler) {
                 startHandler.apply(this, startParams);
             } else {
