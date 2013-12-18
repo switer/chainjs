@@ -1,3 +1,5 @@
+var _ = require('underscore');
+
 var util = {
     batch: function (handlers/*, params*/) {
         var args = Array.prototype.slice.call(arguments);
@@ -58,7 +60,8 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
         // 结束当前链调用
         end: function (data) {
             isEnd = true;
-            util.batch(chainEndHandlers, data);
+
+            util.batch(chainEndHandlers, chain, data);
             chainHandlers = [];
             chainEndHandlers = [];
         },
@@ -81,9 +84,17 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
             } else {
                 return _data;
             }
+        },
+        filter: function () {
+            
+        },
+        before: function () {
+            
+        },
+        after: function () {
+            
         }
     }
-
     args.shift();
     startParams.push(chain);
     startParams = startParams.concat(args);
