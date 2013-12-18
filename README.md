@@ -62,3 +62,7 @@ Chain(function (chain, msg) {
     .start(); // starting chain execute
 ```
 
+## License
+
+MIT
+
