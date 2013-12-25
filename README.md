@@ -128,6 +128,8 @@ Chain(function (chain, msg) {
 
 ## Change Log
 
+[See change logs](https://github.com/switer/chainjs/blob/master/CHANGELOG.md)
+
 ## License
 
 MIT
