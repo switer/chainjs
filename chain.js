@@ -20,9 +20,12 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
 
     var chainHandlers = [],
         chainEndHandlers = [],
+        beforeHandlers = [],
+        afterHandlers = [],
         isEnd = false,
         args = util.slice(arguments),
         startParams = [],
+        cursor = 0,
         _data = {};
 
     // 链调用结束的拦截器
@@ -41,7 +44,9 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
         next: function () {
             if (filter()) return chain;
 
-            var handler = chainHandlers.shift();
+            var handler = chainHandlers[cursor];
+            cursor ++;
+            
             var handlerArgs = [],
                 argParams = util.slice(arguments);
             
@@ -49,10 +54,13 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
             handlerArgs = handlerArgs.concat(argParams);
 
             if (handler) {
+                util.batch.apply(util, [beforeHandlers].concat(handlerArgs));
                 handler.apply(this, handlerArgs);
+
             } else {
                 this.end.apply(this, argParams);
             }
+
             return chain;
         },
         // 链处理结束后始终执行的方法
@@ -97,6 +105,7 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
         // 每个链节点handler的函数切面-before
         before: function (beforeHandler) {
             // TBD
+            beforeHandlers.push(beforeHandler)
             return chain;
         },
         // 每个链节点handler的函数切面-after

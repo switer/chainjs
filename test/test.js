@@ -13,11 +13,21 @@ Chain(function (chain, msg) {
         console.log('Chain step 1');
 
         console.log(param.message); // Next step
-        chain.end({name: 'switer'})
+        chain.next({name: 'switer'});
+    })
+    .then(function (chain, param) {
+        console.log('Chain step 2');
+
+        console.log(param.name); // Next step
+        chain.end({name: 'switer.github.io'});
     })
     .then(function (chain) {
-        console.log('Chain step 2');
         //will be skiped
+        console.log('Chain step 3');
+    })
+    .before(function (chain) {
+        console.log('In each chain-node before handlers');
+        console.log('==================================');
     })
     .final(function (chain, author) {
         console.log('Chain step final');
