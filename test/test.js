@@ -26,8 +26,12 @@ Chain(function (chain, msg) {
         console.log('Chain step 3');
     })
     .before(function (chain) {
-        console.log('In each chain-node before handlers');
-        console.log('==================================');
+        console.log('1----In each chain-node before handlers');
+        console.log('=======================================');
+    })
+    .before(function (chain) {
+        console.log('2----In each chain-node before handlers');
+        console.log('=======================================');
     })
     .final(function (chain, author) {
         console.log('Chain step final');

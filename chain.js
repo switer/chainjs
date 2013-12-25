@@ -34,25 +34,35 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
     }
 
     var chain = {
-        // 添加下一处理方法
+        /**
+         *  Add a chain step handler
+         */
         then: function (handler) {
 
             chainHandlers.push(handler);
             return chain;
         },
-        // 请求调用下一处理方法
-        next: function () {
-            if (filter()) return chain;
-
-            var handler = chainHandlers[cursor];
-            cursor ++;
-            
+        /**
+         *  Go to next chain step invoking
+         */
+        next: function (/*[data,...]*/) {
             var handlerArgs = [],
                 argParams = util.slice(arguments);
             
             handlerArgs.push(chain);
             handlerArgs = handlerArgs.concat(argParams);
 
+            // Invoke after handlers in the header of each next()
+            util.batch.apply(util, [afterHandlers].concat(handlerArgs));
+
+            // chain end filter
+            if (filter()) return chain;
+
+            // pop step handler
+            var handler = chainHandlers[cursor];
+            cursor ++;
+
+            // invoke step handler of invoke end handler
             if (handler) {
                 util.batch.apply(util, [beforeHandlers].concat(handlerArgs));
                 handler.apply(this, handlerArgs);
@@ -61,23 +71,32 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
                 this.end.apply(this, argParams);
             }
 
+            // chain return
             return chain;
         },
-        // 链处理结束后始终执行的方法
+        /**
+         *  Push handler which will be invoked at the chain ending
+         */
         final: function (handler) {
 
             chainEndHandlers.push(handler);
             return chain;
         },
-        // 结束当前链调用
+        /**
+         *  End up cur chain, then it will be invoke final handler
+         */
         end: function (data) {
             isEnd = true;
 
             util.batch(chainEndHandlers, chain, data);
-            chainHandlers = [];
-            chainEndHandlers = [];
+            _data = {};
+            cursor = 0;
+            // chainHandlers = [];
+            // chainEndHandlers = [];
         },
-        // 开始执行链处理
+        /**
+         *  Starting the chain and it will invoke start handler
+         */
         start: function () {
             
             if (startHandler) {
@@ -86,7 +105,9 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
                 this.next();
             }
         },
-        // 链中的节点数据共享
+        /**
+         *  Save data in current chain instance
+         */
         data: function (key, data) {
 
             if (key && data) {
