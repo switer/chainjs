@@ -1,3 +1,12 @@
+/*
+ * chainjs
+ * http://github.com/switer/chainjs
+ *
+ * Copyright (c) 2013 "switer" guankaishe
+ * Licensed under the MIT license.
+ * https://github.com/switer/chainjs/blob/master/LICENSE
+ */
+
 var _ = require('underscore');
 
 var util = {
