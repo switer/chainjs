@@ -18,6 +18,7 @@ var Chain = require('chainjs'),
 
 function beginStep (chain, param) {
     console.log(param.message); //Hello world
+    chain.next('none');
 }
 
 function step1 (chain, data) {
@@ -33,11 +34,11 @@ Chain(beginStep, param)
 
 ## API
 
-### Chain()
+### Chain(beginHandler)
 ```javascript
 Chain(func, param)
 ```
-### then()
+### then(stepHandler)
 ```javascript
 Chain(func).then(func1).then(func2)
 ```
@@ -46,15 +47,16 @@ Chain(func).then(func1).then(func2)
 Chain(func).then(func1).then(func2).start();
 ```
 
-### next()
-### end()
-### final()
+### next(nextParams)
+### end(finalParams)
+### final(finalHandler)
 
-### data()
+### data(savingData)
 Saving data in current chain
 ```javascript
 Chain(function (chain, param) {
     chain.data('param', param);
+    chain.next();
 }, {data: ''})
     .then(function (chain) {
         var param = chain.data('param');
@@ -63,11 +65,27 @@ Chain(function (chain, param) {
     })
     .start();
 ```
-### filter()
+### filter(filterHandler)
 TBD
-### before()
-TBD
-### after()
+### before(beforeHandler)
+
+Will be invoked before each step
+```javascript
+Chain(function (chain, param) {
+    chain.data('param', param);
+    chain.next();
+}, {data: ''})
+    .then(function (chain) { // Step 1
+        var param = chain.data('param');
+
+        console.log(param); // {data:''}
+    })
+    .before(function (chain) { // Step before
+        console.log('It will be invoked before each chain step')
+    })
+    .start();
+```
+### after(afterHandler)
 TBD
 
 
