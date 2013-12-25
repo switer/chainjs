@@ -126,6 +126,8 @@ Chain(function (chain, msg) {
     .start(); // starting chain execute
 ```
 
+## Change Log
+
 ## License
 
 MIT
