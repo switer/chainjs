@@ -127,20 +127,12 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
                 return _data;
             }
         },
-        // 每个链节点的拦截方法
-        filter: function (filterHandler) {
-            // TBD
-            return chain;
-        },
-        // 每个链节点handler的函数切面-before
+        /**
+         *  Chain step handler AOP-before
+         *  Invoke before each step handler
+         */
         before: function (beforeHandler) {
-            // TBD
             beforeHandlers.push(beforeHandler)
-            return chain;
-        },
-        // 每个链节点handler的函数切面-after
-        after: function (afterHandler) {
-            // TBD
             return chain;
         }
     }

@@ -35,46 +35,58 @@ Chain(beginStep, param)
 ## API
 
 ### Chain(beginHandler)
+Instancing a chain and push a start handler with param which will be invoke when chain.start() 
 ```javascript
-Chain(func, param)
+Chain(func, param);
 ```
+
 ### then(stepHandler)
+Push a chain step handler
 ```javascript
 Chain(func).then(func1).then(func2)
 ```
+
 ### start()
+Start the chain and invoke start handler
 ```javascript
 Chain(func).then(func1).then(func2).start();
 ```
 
 ### next(nextParams)
+Go to next step
+```javascript
+chain.next();
+// pass params to next step handler
+chain.next(data);
+```
+
 ### end(finalParams)
+End up current step
+```javascript
+chain.end();
+// pass params to final handler
+chain.end(data);
+```
+
 ### final(finalHandler)
+Pushing final handler which will be invoke when chain.end() or chain step is ending
 
 ### data(savingData)
 Saving data in current chain
 ```javascript
-Chain(function (chain, param) {
-    chain.data('param', param);
-    chain.next();
-}, {data: ''})
-    .then(function (chain) {
-        var param = chain.data('param');
-
-        console.log(param); // {data:''}
-    })
-    .start();
+// set data
+chain.data('param', param);
+// get data
+chain.data('param');
+// get all data
+var chainData = chain.data();
 ```
-### filter(filterHandler)
-TBD
+
 ### before(beforeHandler)
 
 Will be invoked before each step
 ```javascript
-Chain(function (chain, param) {
-    chain.data('param', param);
-    chain.next();
-}, {data: ''})
+Chain(function (chain) {chain.next();})
     .then(function (chain) { // Step 1
         var param = chain.data('param');
 
@@ -85,9 +97,6 @@ Chain(function (chain, param) {
     })
     .start();
 ```
-### after(afterHandler)
-TBD
-
 
 ## Testing
 
