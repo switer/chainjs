@@ -92,7 +92,7 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
             if ( !chainFilter() && context.step >= currentCursor - 1) {
                 handler.apply(chain, handlerArgs);
             }
-
+            chainStatus.steps[currentStep] = true;
         }
 
         lastFilter && lastFilter.stop();
