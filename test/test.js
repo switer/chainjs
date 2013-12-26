@@ -25,11 +25,12 @@ Chain(function (chain, msg) {
         console.log('Chain step 3');
 
         console.log(param.name); // Next step
-        chain.end({name: 'switer.github.io'});
+        chain.next({name: 'switer.github.io'});
     })
     .then(function (chain) {
-        //will be skiped
+
         console.log('Chain step 4');
+        chain.end();
     })
     .filter(function (filter, param) {
         console.log('filter 1', param);
@@ -44,6 +45,10 @@ Chain(function (chain, msg) {
     .before(function (chain, param) {
         console.log('1----In each chain-node before handlers');
         console.log('=======================================');
+        if (param && param.name == 'guankaishe') {
+            param.name = '';
+            chain.next(param);
+        }
     })
     .final(function (chain) {
         console.log('Chain step final');
