@@ -1,10 +1,10 @@
 /*
- * chainjs
- * http://github.com/switer/chainjs
+ *  chainjs
+ *  http://github.com/switer/chainjs
  *
- * Copyright (c) 2013 "switer" guankaishe
- * Licensed under the MIT license.
- * https://github.com/switer/chainjs/blob/master/LICENSE
+ *  Copyright (c) 2013 "switer" guankaishe
+ *  Licensed under the MIT license.
+ *  https://github.com/switer/chainjs/blob/master/LICENSE
  */
 
 var _ = require('underscore');
@@ -22,26 +22,110 @@ var util = {
     // 封装Array.slice
     slice: function (array) {
         return Array.prototype.slice.call(array);
+    },
+    bind: function (context, func) {
+        return function () {
+            func.apply(context, arguments);
+        }
     }
 }
 
-module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
+function Chain (startHandler/*, arg1, [arg2, ...]*/) {
 
     var chainHandlers = [],
         chainEndHandlers = [],
+        filterHandlers = [],
         beforeHandlers = [],
         afterHandlers = [],
+        lastFilter = null,
         isEnd = false,
         args = util.slice(arguments),
         startParams = [],
         cursor = 0,
+        currentStep = 0,
+        currentCursor = 0,
+        chainStatus = {
+            steps: []
+        },
         _data = {};
 
-    // 链调用结束的拦截器
-    function filter () {
+    /**
+     *  inner filter for stop step invoke after ending
+     */
+    function chainFilter () {
         return isEnd;
     }
+    
+    function next (/*[data,...]*/) {
 
+        var context = this;
+
+        var handlerArgs = [],
+            argParams = util.slice(arguments);
+        
+        handlerArgs.push(chain);
+        handlerArgs = handlerArgs.concat(argParams);
+
+        // Invoke after handlers in the header of each next()
+        util.batch.apply(util, [afterHandlers].concat(handlerArgs));
+
+        // chain end filter
+        if (chainFilter()) return chain;
+        // set current step to context step
+        currentStep = context.step;
+        // this step has been invoked
+        if (chainStatus.steps[currentStep]) return chain;
+
+        // pop step handler
+        var handler = chainHandlers[currentStep];
+        // cursor to next step
+        cursor = currentStep + 1;
+        // bind step context
+        chain.next = util.bind({ step: cursor }, next);
+
+        currentCursor ++;
+
+        // invoke step handler
+        function stepHandler () {
+            util.batch.apply(util, [beforeHandlers].concat(handlerArgs));
+            // if the chain is ending and step over, skip the handler
+            if ( !chainFilter() && context.step >= currentCursor - 1) {
+                handler.apply(chain, handlerArgs);
+            }
+
+        }
+
+        lastFilter && lastFilter.stop();
+
+        if (!handler) {
+            chain.end.apply(chain, argParams);
+        }
+        else if (filterHandlers.length >= 1) {
+
+            // instance filter chain
+            var filterChain = Chain();
+            filterChain.chain = chain;
+            lastFilter = filterChain;
+
+            _.each(filterHandlers, function (filterHandler) {
+                filterChain.then(function () {
+                    filterHandler.apply(filterChain, [filterChain].concat(argParams));
+                });
+            });
+
+            filterChain.final(function (filter) {
+                stepHandler.call(filter.chain);
+            }).start();
+
+        } else {
+            stepHandler.call(chain);
+        }
+
+        return chain;
+    }
+    /**
+     *  Chain instance object
+     */
     var chain = {
         /**
          *  Add a chain step handler
@@ -54,35 +138,7 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
         /**
          *  Go to next chain step invoking
          */
-        next: function (/*[data,...]*/) {
-            var handlerArgs = [],
-                argParams = util.slice(arguments);
-            
-            handlerArgs.push(chain);
-            handlerArgs = handlerArgs.concat(argParams);
-
-            // Invoke after handlers in the header of each next()
-            util.batch.apply(util, [afterHandlers].concat(handlerArgs));
-
-            // chain end filter
-            if (filter()) return chain;
-
-            // pop step handler
-            var handler = chainHandlers[cursor];
-            cursor ++;
-
-            // invoke step handler of invoke end handler
-            if (handler) {
-                util.batch.apply(util, [beforeHandlers].concat(handlerArgs));
-                handler.apply(this, handlerArgs);
-
-            } else {
-                this.end.apply(this, argParams);
-            }
-
-            // chain return
-            return chain;
-        },
+        next: next,
         /**
          *  Push handler which will be invoked at the chain ending
          */
@@ -100,14 +156,17 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
             util.batch(chainEndHandlers, chain, data);
             _data = {};
             cursor = 0;
-            // chainHandlers = [];
-            // chainEndHandlers = [];
+            chainHandlers = [];
+            chainEndHandlers = [];
+            filterHandlers = [];
+            beforeHandlers = [];
         },
         /**
          *  Starting the chain and it will invoke start handler
          */
         start: function () {
-            
+            chain.next = util.bind({ step: 0 }, next);
+
             if (startHandler) {
                 startHandler.apply(this, startParams);
             } else {
@@ -134,12 +193,25 @@ module.exports = function (startHandler/*, arg1, [arg2, ...]*/) {
         before: function (beforeHandler) {
             beforeHandlers.push(beforeHandler)
             return chain;
+        },
+        filter: function (filterHandler) {
+            filterHandlers.push(filterHandler)
+            return chain
+        },
+        stop: function () {
+            isEnd = true;
+            _data = {};
+            cursor = 0;
+            chainHandlers = [];
+            chainEndHandlers = [];
         }
     }
-    // 修理初始参数
+    // create start handler param
     args.shift();
     startParams.push(chain);
     startParams = startParams.concat(args);
 
     return chain;
 }
+
+module.exports = Chain;

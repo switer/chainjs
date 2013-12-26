@@ -19,27 +19,33 @@ Chain(function (chain, msg) {
         console.log('Chain step 2');
 
         console.log(param.name); // Next step
+        chain.next({name: 'guankaishe'});
+    })
+    .then(function (chain, param) {
+        console.log('Chain step 3');
+
+        console.log(param.name); // Next step
         chain.end({name: 'switer.github.io'});
     })
     .then(function (chain) {
         //will be skiped
-        console.log('Chain step 3');
+        console.log('Chain step 4');
     })
-    .before(function (chain) {
+    .filter(function (filter, param) {
+        console.log('filter 1', param);
+        // the param will be no to next filter
+        filter.next({'abc':1123});
+    })
+    .filter(function (filter, param) {
+        console.log('filter 2', param);
+        // filter.chain.end();
+        filter.next();
+    })
+    .before(function (chain, param) {
         console.log('1----In each chain-node before handlers');
         console.log('=======================================');
     })
-    .before(function (chain) {
-        console.log('2----In each chain-node before handlers');
-        console.log('=======================================');
-    })
-    .final(function (chain, author) {
+    .final(function (chain) {
         console.log('Chain step final');
-        
-        var param = chain.data('chain:param');
-
-        console.log(param); // Hello world
-        console.log(author.name); // switer
-
     })
     .start(); // starting chain execute
