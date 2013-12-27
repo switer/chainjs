@@ -52,6 +52,23 @@ Start the chain and invoke start handler
 Chain(func).then(func1).then(func2).start();
 ```
 
+### start()
+Start the chain and invoke start handler
+```javascript
+Chain(func).then(func1).then(func2).start();
+```
+
+### stop()
+Stop the chain, mark the chain as ending and destroy local variable
+__notice:__after use chain.stop(), the chain contiue execute current step handler, 
+so use with return for stoping current step excution
+```javascript
+Chain(func).then(function (chain) {
+    chain.stop();
+    return;
+}).start();
+```
+
 ### next(nextParams)
 Go to next step
 ```javascript
@@ -83,8 +100,7 @@ var chainData = chain.data();
 ```
 
 ### before(beforeHandler)
-
-Will be invoked before each step
+Will be invoked before each step in sync
 ```javascript
 Chain(function (chain) {chain.next();})
     .then(function (chain) { // Step 1
@@ -96,6 +112,21 @@ Chain(function (chain) {chain.next();})
         console.log('It will be invoked before each chain step')
     })
     .start();
+```
+
+### filter(filterHandler)
+Invoked before `before` and `step` handler, it run before each chain step, you should use filter.next() 
+continue execute next filter or execute current step handler. If use filter.chain in filter, 
+the chain will skip current step handler and go to next step handler
+```javascript
+Chain(func, param)
+    .then(func)
+    .filter(function (filter) {
+        console.log('run filter');
+        setTimeout( function() {
+            filter.next();
+        });
+    });
 ```
 
 ## Testing

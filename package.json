@@ -1,6 +1,6 @@
 {
   "name": "chainjs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Use chaining call to resolve the problem of javascript async callback handle ",
   "main": "chain.js",
   "scripts": {
