@@ -1,3 +1,5 @@
+define(function(require, exports, module) {
+
 /*
  *  chainjs
  *  http://github.com/switer/chainjs
@@ -278,3 +280,5 @@ if (typeof exports !== 'undefined') {
 } else {
     root.Chain = Chain;
 }
+
+});

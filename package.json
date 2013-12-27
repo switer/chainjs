@@ -4,7 +4,8 @@
   "description": "Use chaining call to resolve the problem of javascript async callback handle ",
   "main": "chain.js",
   "scripts": {
-    "test": "node test/test.js"
+    "test": "node test/test.js",
+    "build": "node build.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,5 @@
     "url": "https://github.com/switer/chainjs/issues"
   },
   "dependencies": {
-    "underscore": "~1.5.2"
   }
 }

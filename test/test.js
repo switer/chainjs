@@ -6,12 +6,14 @@ Chain(function (chain, msg) {
         chain.data('chain:param', msg);
 
         console.log(msg); //Hello world
-        chain.next({message: 'Next step'});
-
+        setTimeout( function() {
+            chain.next({message: 'Next step'});
+        }, 3000);
+        
     }, 'Hello world')
     .then(function (chain, param) {
         console.log('Chain step 1');
-
+        // chain.stop();
         console.log(param.message); // Next step
         chain.next({name: 'switer'});
     })
