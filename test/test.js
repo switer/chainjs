@@ -6,16 +6,17 @@ Chain(function (chain, msg) {
         chain.data('chain:param', msg);
 
         console.log(msg); //Hello world
-        setTimeout( function() {
+        // setTimeout( function() {
             chain.next({message: 'Next step'});
-        }, 3000);
+        // }, 3000);
         
     }, 'Hello world')
     .then(function (chain, param) {
         console.log('Chain step 1');
         // chain.stop();
-        console.log(param.message); // Next step
         chain.next({name: 'switer'});
+        return;
+        console.log(param.message); // log: Next step
     })
     .then(function (chain, param) {
         console.log('Chain step 2');
@@ -36,8 +37,10 @@ Chain(function (chain, msg) {
     })
     .filter(function (filter, param) {
         console.log('filter 1', param);
-        // the param will be no to next filter
-        filter.next({'abc':1123});
+        setTimeout( function() {
+            filter.next({'abc':1123});
+        }, 2000);
+            
     })
     .filter(function (filter, param) {
         console.log('filter 2', param);
