@@ -1,4 +1,4 @@
-define(function(require, exports, module) {
+!function () {
 
 /*
  *  chainjs
@@ -281,4 +281,4 @@ if (typeof exports !== 'undefined') {
     this.Chain = Chain;
 }
 
-});
+}();

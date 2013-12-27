@@ -278,7 +278,7 @@ if (typeof exports !== 'undefined') {
     }
     exports.Chain = Chain;
 } else {
-    root.Chain = Chain;
+    this.Chain = Chain;
 }
 
 });
