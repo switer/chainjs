@@ -9,69 +9,27 @@
 
 'use strict;'
 
-var util = {
-
-    each: function(obj, iterator, context) {
-        context = context || this;
-        if (!obj) return;
-        else if (obj.forEach) {
-            obj.forEach(iterator);
-        } else if (obj.length === +obj.length){
-            for (var i = 0; i < obj.length; i++) {
-                iterator.call(context, obj[i], i);
-            }
-        } else {
-            for (var key in obj) {
-                iterator.call(context, obj[key], key);
-            }
-        }
-    },
-    // invoke handlers in batch process
-    batch: function (handlers/*, params*/) {
-        var args = this.slice(arguments);
-        args.shift();
-        util.each(handlers, function (handler) {
-            if (handler) {
-                // util.invoke(handler, this, args);
-                handler.apply(this, args);
-            }
-        });
-    },
-    // Array.slice
-    slice: function (array) {
-        return Array.prototype.slice.call(array);
-    },
-    // Function.bind
-    bind: function (context, func) {
-        return function () {
-            func.apply(context, arguments);
-        }
-    },
-    invoke: function (handler, context) {
-        var args = this.slice(arguments);
-        args = args.pop();
-        handler.apply(context, args);
-    }
-}
-
+/**
+ *  Chainjs enter funtion
+ *  Create chain instance
+ */
 function Chain (startHandler/*, arg1, [arg2, ...]*/) {
 
     var chainHandlers = [],
         chainEndHandlers = [],
         filterHandlers = [],
         beforeHandlers = [],
-        afterHandlers = [],
+        startParams = [],
         lastFilter = null,
         isEnd = false,
-        args = util.slice(arguments),
-        startParams = [],
         cursor = 0,
         currentStep = 0,
         currentCursor = 0,
         chainStatus = {
             steps: []
         },
-        _data = {};
+        _data = {},
+        args = util.slice(arguments);
 
     /**
      *  inner filter for stop step invoke after ending
@@ -91,9 +49,6 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
         
         handlerArgs.push(chain);
         handlerArgs = handlerArgs.concat(argParams);
-
-        // Invoke after handlers in the header of each next()
-        util.batch.apply(util, [afterHandlers].concat(handlerArgs));
 
         // chain end filter
         if (chainFilter()) return chain;
@@ -190,14 +145,11 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
          */
         end: function (data) {
             isEnd = true;
-
+            // call all final handlers after ending
             util.batch(chainEndHandlers, chain, data);
-            _data = {};
-            cursor = 0;
-            chainHandlers = [];
-            chainEndHandlers = [];
-            filterHandlers = [];
-            beforeHandlers = [];
+            // isEnd verbose??
+            chain.stop();
+            return chain;
         },
         /**
          *  Starting the chain and it will invoke start handler
@@ -211,17 +163,23 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
             } else {
                 this.next();
             }
+            return chain;
         },
         /**
          *  Save data in current chain instance
          */
         data: function (key, data) {
-
+            // set data
             if (key && data) {
                 _data[key] = data;
-            } else if (key && !data) {
+                return chain;
+            }
+            // get data value by key
+            else if (key && !data) { 
                 return _data[key];
-            } else {
+            }
+            // return all data of currently chain
+            else {
                 return _data;
             }
         },
@@ -242,10 +200,12 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
             return chain
         },
         /**
-         *  mark the chain as ending and destrop some inner variable
+         *  mark the chain as ending and destrop some internal variable
          */
         stop: function () {
             isEnd = true;
+
+            // destroy variable
             _data = {};
             cursor = 0;
             currentStep = 0,
@@ -254,7 +214,6 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
             chainEndHandlers = null;
             filterHandlers = null;
             beforeHandlers = null;
-            afterHandlers = null;
             lastFilter = null;
             startParams = null;
             _data = null;
@@ -270,6 +229,64 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
     return chain;
 }
 
+var util = {
+    /**
+      * forEach
+      * I don't want to import underscore, is looks like so heavy if use in chain
+      */
+    each: function(obj, iterator, context) {
+        context = context || this;
+        if (!obj) return;
+        else if (obj.forEach) {
+            obj.forEach(iterator);
+        } else if (obj.length === +obj.length){
+            for (var i = 0; i < obj.length; i++) {
+                iterator.call(context, obj[i], i);
+            }
+        } else {
+            for (var key in obj) {
+                iterator.call(context, obj[key], key);
+            }
+        }
+    },
+    /**
+      *  invoke handlers in batch process
+      */
+    batch: function (handlers/*, params*/) {
+        var args = this.slice(arguments);
+        args.shift();
+        util.each(handlers, function (handler) {
+            if (handler) {
+                // util.invoke(handler, this, args);
+                handler.apply(this, args);
+            }
+        });
+    },
+    /**
+     *  Array.slice
+     */
+    slice: function (array) {
+        return Array.prototype.slice.call(array);
+    },
+    /**
+     *  Function.bind
+     */
+    bind: function (context, func) {
+        return function () {
+            func.apply(context, arguments);
+        }
+    },
+    /**
+     *  function call simple encapsulation
+     */
+    invoke: function (handler, context) {
+        var args = this.slice(arguments);
+        args = args.pop();
+        handler.apply(context, args);
+    }
+}
+
+// AMD/CMD/node/bang
 if (typeof exports !== 'undefined') {
     if (typeof module !== 'undefined' && module.exports) {
         exports = module.exports = Chain;
