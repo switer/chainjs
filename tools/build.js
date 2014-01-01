@@ -1,16 +1,22 @@
 var fs = require('fs'),
+    colors = require('colors'),
     Chain = require('../chain'),
-    cmd = fs.readFileSync('layout/cmd.js', 'utf-8'),
-    browser = fs.readFileSync('layout/browser.js', 'utf-8'),
-    chainjs = fs.readFileSync('chain.js', 'utf-8'),
-    chainCmd = cmd.replace('@content', chainjs),
-    chainBrowser = browser.replace('@content', chainjs);
-
-fs.writeFileSync('build/chain.cmd.js', chainCmd, 'utf-8');
-fs.writeFileSync('build/chain.browser.js', chainBrowser, 'utf-8');
-
+    step = 0;
 
 Chain(function (chain) {
+    fs.readFile('chain.js', {encoding: 'utf-8'}, function (err, data) {
+        if (err) {
+            chain.end({
+                error: err
+            });
+            return;
+        }
+        console.log('Get chainjs content compelete!'.blue.grey);
+        chain.data('content', data);
+        chain.next();
+    });
+})
+.then(function (chain, data) {
     fs.readFile('layout/cmd.js', {encoding: 'utf-8'}, function (err, data) {
         if (err) {
             chain.end({
@@ -18,45 +24,58 @@ Chain(function (chain) {
             });
             return;
         }
+        console.log('Get chainjs cmd module layout compelete!'.blue.grey);
         chain.next(data);
     });
 })
 .then(function (chain, layout) {
-    fs.writeFile('build/chain.cmd.js', layout, {encoding: 'utf-8'}, function (err, data) {
+    var content = chain.data('content');
+
+    fs.writeFile('dist/chain.cmd.js', layout.replace('@content', content), {encoding: 'utf-8'}, function (err, data) {
         if (err) {
             chain.end({
                 error: err
             });
             return;
         }
+        console.log('Build chainjs cmd module success!'.green.grey);
         chain.next();
     });
 })
 .then(function (chain) {
-    fs.readFile('layout/cmd.js', {encoding: 'utf-8'}, function (err, data) {
+    fs.readFile('layout/browser.js', {encoding: 'utf-8'}, function (err, data) {
         if (err) {
             chain.end({
                 error: err
             });
             return;
         }
+        console.log('Get chainjs browser module layout compelete!'.blue.grey);
         chain.next(data);
     });
 })
 .then(function (chain, layout) {
-    fs.writeFile('build/chain.browser.js', layout, {encoding: 'utf-8'}, function (err, data) {
+    var content = chain.data('content');
+
+    fs.writeFile('dist/chain.browser.js', layout.replace('@content', content), {encoding: 'utf-8'}, function (err, data) {
         if (err) {
             chain.end({
                 error: err
             });
             return;
         }
+        console.log('Build chainjs browser module success!'.green.grey);
         chain.next();
     });
 })
-.final(function (data) {
-    if (data.error) {
-        console.log()
+.before(function (chain) {
+    step ++;
+    console.log('Build step ' + step);
+})
+.final(function (chain, data) {
+    if (data && data.error) {
+        console.log(data.error);
     }
+    console.log('Building compelete!');
 })
 .start();

@@ -4,8 +4,8 @@
   "description": "Chainjs call each async function step by step, let async function callback fairily.",
   "main": "chain.js",
   "scripts": {
-    "test": "node test/test.js",
-    "build": "node build.js"
+    "test": "node test/test",
+    "build": "node tools/build"
   },
   "repository": {
     "type": "git",

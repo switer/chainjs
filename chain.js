@@ -159,7 +159,6 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
 
             if (startHandler) {
                 util.invoke(startHandler, this, startParams);
-                // startHandler.apply(this, startParams);
             } else {
                 this.next();
             }
