@@ -62,12 +62,6 @@ Start the chain and invoke start handler
 Chain(func).then(func1).then(func2).start();
 ```
 
-### .start()
-Start the chain and invoke start handler
-```javascript
-Chain(func).then(func1).then(func2).start();
-```
-
 ### .stop()
 Stop the chain, mark the chain as ending and destroy local variable
 __notice:__after use chain.stop(), the chain contiue execute current step handler, 

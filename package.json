@@ -1,7 +1,7 @@
 {
   "name": "chainjs",
-  "version": "0.0.2",
-  "description": "Use chaining call to resolve the problem of javascript async callback handle ",
+  "version": "0.0.3",
+  "description": "Chainjs call each async function step by step, let async function callback fairily.",
   "main": "chain.js",
   "scripts": {
     "test": "node test/test.js",
@@ -16,7 +16,8 @@
     "async",
     "call",
     "callback",
-    "javascript"
+    "javascript",
+    "step"
   ],
   "author": "switer",
   "license": "MIT",
