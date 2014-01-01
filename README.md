@@ -17,7 +17,7 @@ var Chain = require('chainjs'),
     param = {message: 'Hello world';}
 
 function beginStep (chain, param) {
-    console.log(param.message); //Hello world
+    console.log(param.message); // --> Hello world
     chain.next('none');
 }
 
@@ -28,7 +28,7 @@ function step1 (chain, data) {
 Chain(beginStep, param)
     .then(step1)
     .final(function (chain, data) {
-        console.log(data); //say hello
+        console.log(data); // --> say hello
     });
 ```
 
@@ -39,26 +39,36 @@ Instancing a chain and push a start handler with param which will be invoke when
 ```javascript
 Chain(func, param);
 ```
+### Chain.sham(beginHandler)
+chain sham, use for calling chain step handler as normal function 
+```javascript
+function step (chain, param) {
+    console.log(param.name);
+    chain.next();
+}
+var stepSham = Chain.sham(step);
+stepSham({name: "switer"}); // --> switer
+```
 
-### then(stepHandler)
+### .then(stepHandler)
 Push a chain step handler
 ```javascript
 Chain(func).then(func1).then(func2)
 ```
 
-### start()
+### .start()
 Start the chain and invoke start handler
 ```javascript
 Chain(func).then(func1).then(func2).start();
 ```
 
-### start()
+### .start()
 Start the chain and invoke start handler
 ```javascript
 Chain(func).then(func1).then(func2).start();
 ```
 
-### stop()
+### .stop()
 Stop the chain, mark the chain as ending and destroy local variable
 __notice:__after use chain.stop(), the chain contiue execute current step handler, 
 so use with return for stoping current step excution
@@ -69,7 +79,7 @@ Chain(func).then(function (chain) {
 }).start();
 ```
 
-### next(nextParams)
+### .next(nextParams)
 Go to next step
 ```javascript
 chain.next();
@@ -77,7 +87,7 @@ chain.next();
 chain.next(data);
 ```
 
-### end(finalParams)
+### .end(finalParams)
 End up current step
 ```javascript
 chain.end();
@@ -85,10 +95,10 @@ chain.end();
 chain.end(data);
 ```
 
-### final(finalHandler)
+### .final(finalHandler)
 Pushing final handler which will be invoke when chain.end() or chain step is ending
 
-### data(savingData)
+### .data(savingData)
 Saving data in current chain
 ```javascript
 // set data
@@ -99,14 +109,14 @@ chain.data('param');
 var chainData = chain.data();
 ```
 
-### before(beforeHandler)
+### .before(beforeHandler)
 Will be invoked before each step in sync
 ```javascript
 Chain(function (chain) {chain.next();})
-    .then(function (chain) { // Step 1
+    .then(function (chain) { //  --> Step 1
         var param = chain.data('param');
 
-        console.log(param); // {data:''}
+        console.log(param); //  --> {data:''}
     })
     .before(function (chain) { // Step before
         console.log('It will be invoked before each chain step')
@@ -114,7 +124,7 @@ Chain(function (chain) {chain.next();})
     .start();
 ```
 
-### filter(filterHandler)
+### .filter(filterHandler)
 Invoked before `before` and `step` handler, it run before each chain step, you should use filter.next() 
 continue execute next filter or execute current step handler. If use filter.chain in filter, 
 the chain will skip current step handler and go to next step handler

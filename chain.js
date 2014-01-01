@@ -204,7 +204,6 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
          */
         stop: function () {
             isEnd = true;
-
             // destroy variable
             _data = {};
             cursor = 0;
@@ -219,7 +218,8 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
             _data = null;
 
             // throw new Error('chain:stop');
-        }
+        },
+        
     }
     // create start handler param
     args.shift();
@@ -227,6 +227,31 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
     startParams = startParams.concat(args);
 
     return chain;
+}
+
+// chain sham object
+var chainSham = {
+    then: function () {},
+    next: function () {},
+    final: function () {},
+    end: function() {},
+    start: function () {},
+    data: function () {},
+    before: function () {},
+    filter: function () {},
+    stop: function () {},
+    sham: function () {}
+};
+/**
+ *  Make chain sham, use for calling chain step handler as normal function
+ **/
+Chain.sham = function (handler, ctx) {
+    return function () {
+        ctx = ctx || this;
+        var args = util.slice(arguments);
+        args.unshift(chainSham)
+        handler.apply(ctx, args);
+    }
 }
 
 var util = {

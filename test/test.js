@@ -1,5 +1,15 @@
 var Chain = require('../chain');
 
+function step2 (chain, param) {
+    console.log('Chain step 2');
+    console.log(param.name); // Next step
+    chain.next({name: 'guankaishe'});
+}
+
+var step2Sham = Chain.sham(step2);
+
+step2Sham({name: 'guanks'});
+
 Chain(function (chain, msg) {
         console.log('Chain initialize');
         // save param
@@ -18,12 +28,7 @@ Chain(function (chain, msg) {
         return;
         console.log(param.message); // log: Next step
     })
-    .then(function (chain, param) {
-        console.log('Chain step 2');
-
-        console.log(param.name); // Next step
-        chain.next({name: 'guankaishe'});
-    })
+    .then(step2)
     .then(function (chain, param) {
         console.log('Chain step 3');
 
@@ -59,3 +64,4 @@ Chain(function (chain, msg) {
         console.log('Chain step final');
     })
     .start(); // starting chain execute
+
