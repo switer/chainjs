@@ -220,6 +220,9 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
         },
         
     }
+    // marked as chain object
+    chain.__chain = true;
+
     // create start handler param
     args.shift();
     startParams.push(chain);
@@ -241,15 +244,22 @@ var chainSham = {
     stop: function () {},
     sham: function () {}
 };
+
+chainSham.__chain = true;
 /**
  *  Make chain sham, use for calling chain step handler as normal function
  **/
 Chain.sham = function (handler, ctx) {
-    return function () {
-        ctx = ctx || this;
-        var args = util.slice(arguments);
-        args.unshift(chainSham)
-        handler.apply(ctx, args);
+
+    return function (chain) {
+
+        if (!chain.__chain) {
+            
+            ctx = ctx || this;
+            var args = util.slice(arguments);
+            args.unshift(chainSham)
+            handler.apply(ctx, args);
+        }
     }
 }
 
