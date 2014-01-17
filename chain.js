@@ -114,6 +114,7 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
             // call step handler without fillter
             stepHandler.call(chain);
         }
+        
         return chain;
     }
     /**
@@ -179,7 +180,7 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
             }
             // return all data of currently chain
             else {
-                return _data;
+                return util.extend(_data);
             }
         },
         /**
@@ -311,12 +312,28 @@ var util = {
         }
     },
     /**
+     *  Object extend api
+     **/
+    extend: function (obj, extObj) {
+
+        this.each(extObj, function (value, key) {
+            if (extObj.hasOwnProperty(key)) {
+                obj[key] = value;
+            }
+        });
+        return obj;
+    },
+    /**
      *  function call simple encapsulation
      */
     invoke: function (handler, context) {
         var args = this.slice(arguments);
         args = args.pop();
-        handler.apply(context, args);
+        try {
+            handler.apply(context, args);
+        } catch (e) {
+            
+        }
     }
 }
 

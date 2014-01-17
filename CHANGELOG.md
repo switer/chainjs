@@ -3,6 +3,8 @@
 ## Version 0.0.3 - 2014/11/11
 
 - [Feature]: Add Chain.sham api, for calling chain step-handler normally
+- [Fix bug]: data() api using extend to export chain data instead of return private data variable
+
 
 ## Version 0.0.2 - 2013/12/27
 
