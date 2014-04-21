@@ -63,7 +63,7 @@ Chain(func).then(func1).then(func2).start();
 ```
 
 ### .stop()
-Stop the chain, mark the chain as ending and destroy local variable
+Stop the chain, mark the chain as ending and destroy local variable, but not call ending funtions
 __notice:__after use chain.stop(), the chain contiue execute current step handler, 
 so use with return for stoping current step excution
 ```javascript
@@ -82,7 +82,7 @@ chain.next(data);
 ```
 
 ### .end(finalParams)
-End up current step
+End up chain steps, mark the chain as ending
 ```javascript
 chain.end();
 // pass params to final handler

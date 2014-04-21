@@ -1,0 +1,24 @@
+{
+  "name": "chainjs",
+  "version": "0.0.3",
+  "homepage": "https://github.com/switer/chainjs",
+  "authors": [
+    "switer <guankaishe@gmail.com>"
+  ],
+  "description": "Chainjs call each async function step by step, let async function callback fairily.",
+  "main": "chain.js",
+  "keywords": [
+    "chain",
+    "aync",
+    "connect",
+    "chainjs"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
