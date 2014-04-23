@@ -232,18 +232,22 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
     return chain;
 }
 
+/* =================================================================== */
+
+var NOOP = function () {};
+
 // chain sham object
 var chainSham = {
-    then: function () {},
-    next: function () {},
-    final: function () {},
-    end: function() {},
-    start: function () {},
-    data: function () {},
-    before: function () {},
-    filter: function () {},
-    stop: function () {},
-    sham: function () {}
+    then: NOOP,
+    next: NOOP,
+    final: NOOP,
+    end: NOOP,
+    start: NOOP,
+    data: NOOP,
+    before: NOOP,
+    filter: NOOP,
+    stop: NOOP,
+    sham: NOOP
 };
 
 chainSham.__chain = true;
