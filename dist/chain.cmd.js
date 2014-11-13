@@ -116,6 +116,7 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
             // call step handler without fillter
             stepHandler.call(chain);
         }
+        
         return chain;
     }
     /**
@@ -181,7 +182,7 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
             }
             // return all data of currently chain
             else {
-                return _data;
+                return util.extend(_data);
             }
         },
         /**
@@ -222,6 +223,9 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
         },
         
     }
+    // marked as chain object
+    chain.__chain = true;
+
     // create start handler param
     args.shift();
     startParams.push(chain);
@@ -230,28 +234,39 @@ function Chain (startHandler/*, arg1, [arg2, ...]*/) {
     return chain;
 }
 
+/* =================================================================== */
+
+var NOOP = function () {};
+
 // chain sham object
 var chainSham = {
-    then: function () {},
-    next: function () {},
-    final: function () {},
-    end: function() {},
-    start: function () {},
-    data: function () {},
-    before: function () {},
-    filter: function () {},
-    stop: function () {},
-    sham: function () {}
+    then: NOOP,
+    next: NOOP,
+    final: NOOP,
+    end: NOOP,
+    start: NOOP,
+    data: NOOP,
+    before: NOOP,
+    filter: NOOP,
+    stop: NOOP,
+    sham: NOOP
 };
+
+chainSham.__chain = true;
 /**
  *  Make chain sham, use for calling chain step handler as normal function
  **/
 Chain.sham = function (handler, ctx) {
-    return function () {
-        ctx = ctx || this;
-        var args = util.slice(arguments);
-        args.unshift(chainSham)
-        handler.apply(ctx, args);
+
+    return function (chain) {
+
+        if (!chain.__chain) {
+            
+            ctx = ctx || this;
+            var args = util.slice(arguments);
+            args.unshift(chainSham)
+            handler.apply(ctx, args);
+        }
     }
 }
 
@@ -303,12 +318,28 @@ var util = {
         }
     },
     /**
+     *  Object extend api
+     **/
+    extend: function (obj, extObj) {
+
+        this.each(extObj, function (value, key) {
+            if (extObj.hasOwnProperty(key)) {
+                obj[key] = value;
+            }
+        });
+        return obj;
+    },
+    /**
      *  function call simple encapsulation
      */
     invoke: function (handler, context) {
         var args = this.slice(arguments);
         args = args.pop();
-        handler.apply(context, args);
+        try {
+            handler.apply(context, args);
+        } catch (e) {
+            
+        }
     }
 }
 

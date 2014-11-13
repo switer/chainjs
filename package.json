@@ -24,6 +24,7 @@
   "bugs": {
     "url": "https://github.com/switer/chainjs/issues"
   },
-  "dependencies": {
+  "devDependencies": {
+    "colors": "^0.6.2"
   }
 }
