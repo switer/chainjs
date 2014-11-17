@@ -77,6 +77,13 @@ chain.next();
 chain.next(data);
 ```
 
+### .wait(time, nextParams)
+Waiting some time then call next step
+```javascript
+// pass params to next step handler
+chain.wait(5000, data); // wait 5s then call next
+```
+
 ### .end(finalParams)
 End up chain steps, mark the chain as ending
 ```javascript
