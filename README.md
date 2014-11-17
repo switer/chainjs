@@ -32,7 +32,7 @@ Chain(beginStep)
     });
 ```
 
-[diagram](http://switer.qiniudn.com/chainjs-diagram.png)
+![diagram](http://switer.qiniudn.com/chainjs-diagram.png)
 
 ## API
 
