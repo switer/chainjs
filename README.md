@@ -36,19 +36,19 @@ Chain(beginStep)
 
 ## API
 
-### Chain(beginHandler)
+### Chain(func, func1, ..., funcN)
 Instancing a chain and then likes call "then"
 ```javascript
 Chain(func /*, func1, ..., funcN*/);
 ```
 
-### .then(stepHandler /*, func1, ..., funcN*/)
+### .then(func, func1, ..., funcN)
 Define chain steps, if a then step has multiple functions, step over after each func call chain.next()
 ```javascript
 Chain(func).then(func1).then(funcA1, funcA2, funcA3)
 ```
 
-### .some()
+### .some(func, func1, ..., funcN)
 When call chain.next in which handler of "some" step will be over current step.
 ```javascript
 Chain(func).then(func1).some(funcA1, funcA2, funcA3)
