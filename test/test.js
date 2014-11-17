@@ -1,67 +1,46 @@
 var Chain = require('../chain');
 
-function step2 (chain, param) {
-    console.log('Chain step 2');
-    console.log(param.name); // Next step
-    chain.next({name: 'guankaishe'});
-}
-
-var step2Sham = Chain.sham(step2);
-
-step2Sham({name: 'guanks'});
-
-Chain(function (chain, msg) {
-        console.log('Chain initialize');
-        // save param
-        chain.data('chain:param', msg);
-
-        console.log(msg); //Hello world
-        // setTimeout( function() {
-            chain.next({message: 'Next step'});
-        // }, 3000);
-        
-    }, 'Hello world')
-    .then(function (chain, param) {
+Chain(function (chain, param) {
+        console.log('this is {}', this);
         console.log('Chain step 1');
-        // chain.stop();
-        chain.next({name: 'switer'});
-        return;
-        console.log(param.message); // log: Next step
+        chain.wait(1000, {name: 'switer'});
     })
-    .then(step2)
+    .some(function (chain) {
+        // console.log('Chain step 2-1');
+        chain.wait(Math.round(Math.random()*5000), {name: 'Step 2-1'})
+    }, function (chain) {
+        // console.log('Chain step 2-2');
+        chain.wait(Math.round(Math.random()*5000), {name: 'Step 2-2'})
+    }, function (chain) {
+        // console.log('Chain step 2-3');
+        chain.wait(Math.round(Math.random()*5000), {name: 'Step 2-3'})
+    })
     .then(function (chain, param) {
         console.log('Chain step 3');
 
-        console.log(param.name); // Next step
+        console.log('[In step 3] prev is : ', param.name); // Next step
         chain.next({name: 'switer.github.io'});
     })
     .then(function (chain) {
-
-        console.log('Chain step 4');
-        chain.end();
-    })
-    .filter(function (filter, param) {
-        console.log('filter 1', param);
+        console.log('Chain step 4-1');
+        chain.next();
+            
+    }, function (chain) {
         setTimeout( function() {
-            filter.next({'abc':1123});
+            console.log('Chain step 4-2');
+            chain.next();
         }, 2000);
             
-    })
-    .filter(function (filter, param) {
-        console.log('filter 2', param);
-        // filter.chain.end();
-        filter.next();
-    })
-    .before(function (chain, param) {
-        console.log('1----In each chain-node before handlers');
-        console.log('=======================================');
-        if (param && param.name == 'guankaishe') {
-            param.name = '';
-            chain.next(param);
-        }
+    }, function (chain) {
+        setTimeout( function() {
+            console.log('Chain step 4-3');
+            chain.next();
+        }, 1000);
     })
     .final(function (chain) {
         console.log('Chain step final');
+        chain.destroy();
     })
+    .context({})
     .start(); // starting chain execute
 

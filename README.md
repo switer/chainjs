@@ -39,16 +39,6 @@ Instancing a chain and push a start handler with param which will be invoke when
 ```javascript
 Chain(func, param);
 ```
-### Chain.sham(beginHandler)
-chain sham, use for calling chain step handler as normal function 
-```javascript
-function step (chain, param) {
-    console.log(param.name);
-    chain.next();
-}
-var stepSham = Chain.sham(step);
-stepSham({name: "switer"}); // --> switer
-```
 
 ### .then(stepHandler)
 Push a chain step handler
@@ -62,13 +52,13 @@ Start the chain and invoke start handler
 Chain(func).then(func1).then(func2).start();
 ```
 
-### .stop()
-Stop the chain, mark the chain as ending and destroy local variable, but not call ending funtions
-__notice:__after use chain.stop(), the chain contiue execute current step handler, 
+### .destroy()
+Destroy the chain, mark the chain as ending and destroy local variable, but not call ending funtions
+__notice:__after use chain.destroy(), the chain contiue execute current step handler, 
 so use with return for stoping current step excution
 ```javascript
 Chain(func).then(function (chain) {
-    chain.stop();
+    chain.destroy();
     return;
 }).start();
 ```
@@ -101,36 +91,6 @@ chain.data('param', param);
 chain.data('param');
 // get all data
 var chainData = chain.data();
-```
-
-### .before(beforeHandler)
-Will be invoked before each step in sync
-```javascript
-Chain(function (chain) {chain.next();})
-    .then(function (chain) { //  --> Step 1
-        var param = chain.data('param');
-
-        console.log(param); //  --> {data:''}
-    })
-    .before(function (chain) { // Step before
-        console.log('It will be invoked before each chain step')
-    })
-    .start();
-```
-
-### .filter(filterHandler)
-Invoked before `before` and `step` handler, it run before each chain step, you should use filter.next() 
-continue execute next filter or execute current step handler. If use filter.chain in filter, 
-the chain will skip current step handler and go to next step handler
-```javascript
-Chain(func, param)
-    .then(func)
-    .filter(function (filter) {
-        console.log('run filter');
-        setTimeout( function() {
-            filter.next();
-        });
-    });
 ```
 
 ## Testing

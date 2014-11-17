@@ -10,15 +10,15 @@ var chain = Chain(function (chain, msg) {
         console.log(msg); //Hello world
         chain.next({message: 'Next step'});
         
-    }, 'Hello world');
+    });
 
 
-for (var i = 0 ; i < 2100; i ++) {
+for (var i = 0 ; i < 1200; i ++) {
     // !function (index) {
         chain.then(function (chain, param) {
             // console.log('Chain step ' + index );
+            console.log(param.name);
             chain.next({name: 'switer'});
-            console.log('-----');
         });
     // }(i);
 }
