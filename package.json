@@ -1,6 +1,6 @@
 {
   "name": "chainjs",
-  "version": "0.1.0",
+  "version": "0.1.0-1",
   "description": "Chainjs call each async function step by step, let async function callback fairily.",
   "main": "chain.js",
   "scripts": {
