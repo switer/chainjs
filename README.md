@@ -13,21 +13,21 @@ npm install chainjs
 
 __use in node:__
 ```javascript
-var Chain = require('chainjs'),
-    param = {message: 'Hello world';}
+var Chain = require('chainjs')
 
-function beginStep (chain, param) {
-    console.log(param.message); // --> Hello world
+function beginStep (chain) {
+    console.log('initialize');
     chain.next('none');
 }
 
 function step1 (chain, data) {
+    console.log(data); // --> none
     chain.next('say hello');
 }
 
-Chain(beginStep, param)
+Chain(beginStep)
     .then(step1)
-    .final(function (chain, data) {
+    .final(function (chain) {
         console.log(data); // --> say hello
     });
 ```
@@ -35,19 +35,25 @@ Chain(beginStep, param)
 ## API
 
 ### Chain(beginHandler)
-Instancing a chain and push a start handler with param which will be invoke when chain.start() 
+Instancing a chain and then likes call "then"
 ```javascript
-Chain(func, param);
+Chain(func /*, func1, ..., funcN*/);
 ```
 
-### .then(stepHandler)
-Push a chain step handler
+### .then(stepHandler /*, func1, ..., funcN*/)
+Define chain steps, if a then step has multiple functions, step over after each func call chain.next()
 ```javascript
-Chain(func).then(func1).then(func2)
+Chain(func).then(func1).then(funcA1, funcA2, funcA3)
+```
+
+### .some()
+When call chain.next in which handler of "some" step will be over current step.
+```javascript
+Chain(func).then(func1).some(funcA1, funcA2, funcA3)
 ```
 
 ### .start()
-Start the chain and invoke start handler
+Start running the chain
 ```javascript
 Chain(func).then(func1).then(func2).start();
 ```
