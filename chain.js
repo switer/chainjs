@@ -186,7 +186,7 @@ utils.merge(Chain.prototype, {
         // set data
         if (key && data) {
             this._data[key] = data
-            return chain
+            return this
         }
         // get data value by key
         else if (key && !data) return this._data[key]

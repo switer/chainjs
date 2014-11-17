@@ -24,6 +24,7 @@ Chain(function (chain, param) {
     .then(function (chain) {
         console.log('Chain step 4-1');
         chain.next();
+        chain.next();
             
     }, function (chain) {
         setTimeout( function() {

@@ -68,10 +68,6 @@ Chain(function (chain) {
         chain.next();
     });
 })
-.before(function (chain) {
-    step ++;
-    console.log('Build step ' + step);
-})
 .final(function (chain, data) {
     if (data && data.error) {
         console.log(data.error);
