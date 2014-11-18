@@ -87,7 +87,7 @@ chain.wait(5000, data); // wait 5s then call next
 ```
 
 ### .end(finalParams)
-End up chain steps, mark the chain as ending
+End up chain steps, mark the chain as ending, for cross steps data sharing
 ```javascript
 chain.end();
 // pass params to final handler
@@ -118,30 +118,50 @@ npm test
 
 ```javascript
 var Chain = require('chainjs');
+var someStepCount = 0;
+var parallelCount = 0;
 
-Chain(function (chain, msg) {
+Chain(function (chain) {
         // save param
-        chain.data('chain:param', msg);
-
-        console.log(msg); //Hello world
+        chain.data('chain:param', 'Chain initial step data');
         chain.next({message: 'Next step'});
-
-    }, 'Hello world')
-    .then(function (chain, param) {
-
-        console.log(param.message); // Next step
-        chain.end({name: 'switer'})
+    })
+    .some(function (chain, param) {
+        someStepCount ++;
+        chain.wait(2000, 'step is "some-1"');
+    }, function (chain, param) {
+        someStepCount ++;
+        chain.wait(1000, 'step is "some-2"');
+    })
+    .then(function (chain, msg) {
+        console.log(msg); // step is "some-2
+        // Step over when last step has one hander called
+        console.log(someStepCount); // 1
+        chain.next();
     })
     .then(function (chain) {
-        //will be skiped
+        parallelCount ++;
+        chain.next();
+    }, function (chain) {
+        parallelCount ++;
+        chain.next();
+    }, function (chain) {
+        parallelCount ++;
+        chain.next();
     })
-    .final(function (chain, author) {
+    .then(function (chain) {
+        // all handlers had been called in last step
+        console.log(parallelCount); // 3
+        chain.end();
+    })
+    .then(function (chain) {
+        //prev step had call chain.end(), so this step will be skiped
+    })
+    .final(function (chain) {
         var param = chain.data('chain:param');
-
-        console.log(param); // Hello world
-        console.log(author.name); // switer
-
+        console.log(param); // "Chain initial step data"
     })
+    .context(this)
     .start(); // starting chain execute
 ```
 
