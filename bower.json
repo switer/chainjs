@@ -1,11 +1,11 @@
 {
   "name": "chainjs",
-  "version": "0.0.3",
+  "version": "0.1.0-1",
   "homepage": "https://github.com/switer/chainjs",
   "authors": [
     "switer <guankaishe@gmail.com>"
   ],
-  "description": "Chainjs call each async function step by step, let async function callback fairily.",
+  "description": "Chained async steps calling.Compare to Promise is more simple and clear.",
   "main": "chain.js",
   "keywords": [
     "chain",
