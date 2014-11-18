@@ -36,7 +36,7 @@ Chain(beginStep)
 ![diagram](http://switer.qiniudn.com/chainjs-diagram.png)
 
 ## API
-Each step has been passed the `chain` instance in the first argument
+Each step's handler has been passed the `chain` instance as the first argument
 
 ### Chain(func, func1, ..., funcN)
 Instancing a chain and define a chain step
