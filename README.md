@@ -1,7 +1,8 @@
 chainjs
 =======
 
-Chainjs call each async function step by step, let async function callback fairily.
+Chained async steps calling.Compare to Promise is more simple and clear. I has use it in node.js backend and browser
+client case.
 
 ## Install
 
@@ -35,9 +36,10 @@ Chain(beginStep)
 ![diagram](http://switer.qiniudn.com/chainjs-diagram.png)
 
 ## API
+Each step has been passed the `chain` instance in the first argument
 
 ### Chain(func, func1, ..., funcN)
-Instancing a chain and then likes call "then"
+Instancing a chain and define a chain step
 ```javascript
 Chain(func /*, func1, ..., funcN*/);
 ```
