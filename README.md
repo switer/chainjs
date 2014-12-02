@@ -56,8 +56,8 @@ When call chain.next in which handler of "some" step will be over current step.
 Chain(func).then(func1).some(funcA1, funcA2, funcA3)
 ```
 
-### .start()
-Start running the chain
+### .start(data)
+Start running the chain, and could pass data to initial step.
 ```javascript
 Chain(func).then(func1).then(func2).start();
 ```
