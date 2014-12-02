@@ -59,6 +59,7 @@ Chain(function (chain, data) {
         return chain.next()
     }
     flag = true
+    chain.retry()
 }).start('value')
 ```
 
