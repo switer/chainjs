@@ -73,6 +73,7 @@ Chain(func).then(func1).then(func2).start();
 
 ### .destroy()
 Destroy the chain, mark the chain as ending and destroy local variable, but not call ending funtions
+
 __notice:__ after use chain.destroy(), the chain contiue execute current step handler, 
 so use with return for stoping current step excution
 ```javascript
