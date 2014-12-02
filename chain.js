@@ -123,7 +123,7 @@ utils.merge(Chain.prototype, {
         return this
     },
     /**
-     *  @RuntimeMethod can be call in runtime
+     *  @RuntimeMethod only be called in runtime
      *  Check current node states and execulate nextNode
      **/
     next: function() {
@@ -167,6 +167,8 @@ utils.merge(Chain.prototype, {
             utils.merge(chainDummy, that)
             chainDummy.__id = node.id
             chainDummy.__index = index
+            chainDummy.__callee = item
+            chainDummy.__arguments = xArgs
             chainDummy.__proto__ = that.__proto__
 
             xArgs.unshift(chainDummy)
@@ -174,9 +176,17 @@ utils.merge(Chain.prototype, {
         })
         return this
     },
+
     /**
-     *  @RuntimeMethod can be call in runtime
-     *  comment
+     *  @RuntimeMethod only be called in runtime
+     *  Run current step once again
+     **/
+    retry: function () {
+        if (this._end || this._destroy) return
+        this.__callee.apply(this._context, this.__arguments)
+    },
+    /**
+     *  @RuntimeMethod only be called in runtime
      **/
     wait: function(time) {
         if (this._destroy) return
@@ -188,9 +198,8 @@ utils.merge(Chain.prototype, {
         }, time)
     },
     /**
-     *  @RuntimeMethod can be call in runtime
-     *
-     *  Save/Update/Get data in current chain instance
+     *  @RuntimeMethod only be called in runtime
+     *  Save, Update, Get data in current chain instance
      */
     data: function(key, data) {
         if (this._destroy) return

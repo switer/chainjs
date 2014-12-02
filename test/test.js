@@ -230,6 +230,71 @@ describe('chainjs', function () {
     /**
      *  comment
      **/
+    describe('#retry', function () {
+        it('Call current step handler once again', function () {
+            var once = false
+            var again = false
+            Chain(function (chain, data) {
+                    if (once) {
+                        again = true
+                        assert.equal(data, 'switer', 'Data is uncorrect when chain.retry()')
+                        return chain.next()
+                    }
+                    once = true
+                    chain.retry()
+                    chain.next()
+                })
+            .then(function (chain) {
+                    assert(again, 'Last step has not been called twice')
+                    again = false
+                })
+            .start('switer')
+        })
+        it('Call all-step handler once again', function () {
+            var once = false
+            var again = false
+            Chain(function (chain) {
+                    chain.next()
+                }, function (chain, data) {
+                    if (once) {
+                        again = true
+                        return chain.next()
+                    }
+                    once = true
+                    chain.retry()
+                })
+            .then(function (chain) {
+                    assert(again, 'Last step one hander has not been called twice')
+                    again = false
+                })
+            .start('switer')
+        })
+        it('Call some-step handler once again', function () {
+            var once = false
+            var again = false
+            Chain(function (chain) {
+                    chain.next()
+                })
+            .some(function (chain, data) {
+                    if (once) {
+                        again = true
+                        return chain.next()
+                    }
+                    once = true
+                    chain.retry()
+                }, function (chain) {
+                    chain.next()
+                })
+            .then(function (chain) {
+                    assert(again, 'Last step one hander has not been called twice')
+                    again = false
+                })
+            .start('switer')
+        })
+    })
+    /**
+     *  comment
+     **/
     describe('#some', function () {
         it('Run after one handler done in last step', function (done) {
             var count = 0
