@@ -100,15 +100,24 @@ function pushNode( /*handler1, handler2, ..., handlerN*/ ) {
     return node
 }
 
+function noop () {}
+function setAlltoNoop (obj, methods) {
+    utils.each(methods, function (method) {
+        obj[method] = noop
+    })
+}
+
 utils.merge(Chain.prototype, {
     /**
      *  Define a chain node
      **/
     then: function() {
+        if (this._destroy) return
         pushNode.apply(this, arguments)
         return this
     },
     some: function() {
+        if (this._destroy) return
         var node = pushNode.apply(this, arguments)
         if (node.items.length) node.type = 'some'
         return this
@@ -118,10 +127,10 @@ utils.merge(Chain.prototype, {
      *  Check current node states and execulate nextNode
      **/
     next: function() {
+        if (this._end || this._destroy) return
         var that = this
         var args = utils.slice(arguments)
         var node
-        if (this._end) return
 
         if (this.__id) {
             node = this._nodes.get(this.__id)
@@ -170,6 +179,7 @@ utils.merge(Chain.prototype, {
      *  comment
      **/
     wait: function(time) {
+        if (this._destroy) return
         var that = this
         var args = utils.slice(arguments)
         args.shift()
@@ -183,6 +193,7 @@ utils.merge(Chain.prototype, {
      *  Save/Update/Get data in current chain instance
      */
     data: function(key, data) {
+        if (this._destroy) return
         // set data
         if (key && data) {
             this._data[key] = data
@@ -194,19 +205,20 @@ utils.merge(Chain.prototype, {
         else return util.merge({}, this._data)
     },
     start: function() {
-        if (this._end) return
+        if (this._end || this._destroy) return
 
         this._running = true
-        this.next()  
+        this.next.apply(this, arguments)
         return this
     },
     end: function() {
-        if (this._end) return
+        if (this._end || this._destroy) return
         this._end = true
-        utils.batch(this._context, this._finals, this)
+        utils.batch.apply(utils, [this._context, this._finals, this].concat(utils.slice(arguments)) )
         return this
     },
     final: function (handler) {
+        if (this._destroy) return
         this._finals.push(handler)
         return this
     },
@@ -214,12 +226,16 @@ utils.merge(Chain.prototype, {
      *  @RuntimeMethod can be call in runtime
      **/
     destroy: function() {
+        this._destroy = true
         this._context = null
         this._data = null
         this._nodes = null
+        this._finals = null
+        setAlltoNoop(this, ['then', 'some', 'next', 'wait', 'data', 'start', 'end', 'final', 'destroy'])
         return this
     },
     context: function(ctx) {
+        if (this._destroy) return
         this._context = ctx
         return this
     }

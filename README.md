@@ -111,7 +111,7 @@ var chainData = chain.data();
 ```
 
 ## Testing
-
+Chainjs using [mocha](http://mochajs.org/) for BBD test, run below cli to run testing in nodejs
 ```bash
 npm test
 ```
