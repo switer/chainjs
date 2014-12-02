@@ -50,6 +50,18 @@ Define chain steps, if a then step has multiple functions, step over after each 
 Chain(func).then(func1).then(funcA1, funcA2, funcA3)
 ```
 
+### .retry()
+Call current step handler once again (recursive).
+```javascript
+var flag
+Chain(function (chain, data) {
+    if (flag) {
+        return chain.next()
+    }
+    flag = true
+}).start('value')
+```
+
 ### .some(func, func1, ..., funcN)
 When call chain.next in which handler of "some" step will be over current step.
 ```javascript
