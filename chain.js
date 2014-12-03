@@ -148,7 +148,7 @@ utils.merge(Chain.prototype, {
                 node._pending = true
             }
             node._isDone = true
-            if (this._nodes.isLast(this.__id)) return this.end()
+            if (this._nodes.isLast(this.__id)) return this.end.apply(this, arguments)
         }
 
         // GET next node

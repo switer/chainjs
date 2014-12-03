@@ -76,6 +76,15 @@ describe('chainjs', function () {
             })
             .start()
         })
+        it('Pass next data to final step through chai.next(data) when chain has no next step', function () {
+            Chain(function (chain) {
+                chain.next('switer')
+            })
+            .final(function (chain, data) {
+                assert.equal(data, 'switer', 'Uncorrect passed data from last step')
+            })
+            .start()
+        })
     })
     /**
      *  comment
