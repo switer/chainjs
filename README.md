@@ -16,24 +16,27 @@ __use in node:__
 ```javascript
 var Chain = require('chainjs')
 
-function beginStep (chain) {
-    console.log('initialize');
-    chain.next('none');
-}
-
-function step1 (chain, data) {
-    console.log(data); // --> none
-    chain.next('say hello');
-}
-
-Chain(beginStep)
-    .then(step1)
-    .final(function (chain) {
+Chain(function (chain) {
+        console.log('initialize');
+        chain.next('none');
+    })
+    .some(function () {
+        chain.wait(300, 'then go to next')
+    }, function () {
+        chain.wait(200, 'then go to next')
+    }, function () {
+        chain.wait(100, 'then go to next')
+    })
+    .then(function (chain, data) {
+        console.log(data); // --> none
+        chain.next('say hello');
+    })
+    .final(function (chain, data) {
         console.log(data); // --> say hello
     });
 ```
 
-![diagram](http://switer.qiniudn.com/chainjs-diagram.png)
+![diagram](http://switer.qiniudn.com/chainjs2.png)
 
 ## API
 Each step's handler has been passed the `chain` instance as the first argument
@@ -77,7 +80,8 @@ Chain(func).then(func1).then(func2).start();
 
 ### .destroy()
 Destroy the chain, mark the chain as ending and destroy local variable, but not call ending funtions
-__notice:__after use chain.destroy(), the chain contiue execute current step handler, 
+
+__notice:__ after use chain.destroy(), the chain contiue execute current step handler, 
 so use with return for stoping current step excution
 ```javascript
 Chain(func).then(function (chain) {
