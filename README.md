@@ -21,9 +21,11 @@ Chain(function (chain) {
         chain.next('none');
     })
     .some(function () {
-        chain.wait(100, 'then go to next')
+        chain.wait(300, 'then go to next')
     }, function () {
         chain.wait(200, 'then go to next')
+    }, function () {
+        chain.wait(100, 'then go to next')
     })
     .then(function (chain, data) {
         console.log(data); // --> none
