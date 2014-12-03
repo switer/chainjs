@@ -20,6 +20,11 @@ Chain(function (chain) {
         console.log('initialize');
         chain.next('none');
     })
+    .some(function () {
+        chain.wait(100, 'then go to next')
+    }, function () {
+        chain.wait(200, 'then go to next')
+    })
     .then(function (chain, data) {
         console.log(data); // --> none
         chain.next('say hello');
@@ -29,7 +34,7 @@ Chain(function (chain) {
     });
 ```
 
-![diagram](http://switer.qiniudn.com/chainjs-diagram.png)
+![diagram](http://switer.qiniudn.com/chainjs2.png)
 
 ## API
 Each step's handler has been passed the `chain` instance as the first argument
