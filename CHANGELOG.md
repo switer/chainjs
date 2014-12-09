@@ -1,8 +1,17 @@
 ## ChangeLog for: chainjs
 
-## Version 0.1.1 - 2014/11/17
 
+## Version 0.1.2 - 2014/12/3
+
+- [Feature] add retry() api
+- [Bug] pass arguments to final step when chain.next and has no next step.
+
+## Version 0.1.1 - 2014/12/2
+
+- [Feature] start() can pass data to initial step.
 - [Bug] fixed "data" method bug
+- [Bug] destroy() stop anything and release private data in chain's scope.
+- [Testing] BDD testing
 
 ## Version 0.1.0 - 2014/11/17
 

@@ -328,6 +328,27 @@ describe('chainjs', function () {
             })
             .start()
         })
+
+        it('Passing data form some step to next step', function (done) {
+            Chain(function (chain) {
+                chain.next()
+            })
+            .some(function (chain) {
+                setTimeout( function() {
+                    chain.next('some step 1')
+                }, 100);
+                    
+            }, function (chain) {
+                setTimeout( function() {
+                    chain.next('some step 2')
+                }, 200);
+            })
+            .then(function (chain, data) {
+                assert.equal(data, 'some step 1', 'Uncorrect passed data from last step')
+                done()
+            })
+            .start()
+        })
     })
     /**
      *  comment
