@@ -29,7 +29,7 @@ Chain(function (chain) {
         chain.wait(100, 'then go to next')
     })
     .then(function (chain, data) {
-        console.log(data); // --> none
+        console.log(data); // --> then go to next
         chain.next('say hello');
     })
     .final(function (chain, data) {
