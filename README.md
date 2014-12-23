@@ -21,11 +21,11 @@ Chain(function (chain) {
         console.log('initialize');
         chain.next('none');
     })
-    .some(function () {
+    .some(function (chain) {
         chain.wait(300, 'then go to next')
-    }, function () {
+    }, function (chain) {
         chain.wait(200, 'then go to next')
-    }, function () {
+    }, function (chain) {
         chain.wait(100, 'then go to next')
     })
     .then(function (chain, data) {
