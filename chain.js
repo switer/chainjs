@@ -118,7 +118,7 @@ utils.merge(Chain.prototype, {
         var that = this
         var args = utils.slice(arguments)
         args = utils.type(args[0]) == 'array' ? args[0]:args
-        args.forEach(function (item) {
+        utils.each(args, function (item) {
             pushNode.call(that, item)
         })
         return this
@@ -161,21 +161,22 @@ utils.merge(Chain.prototype, {
             node.state._pending = true
             node.state._dones = []
         }
+        var that = this
         utils.each(node.items, function(item, index) {
-            var xArgs = args.slice()
+            var xArgs = utils.slice(args)
             var chainDummy = {
-                state: this.state,
-                props: this.props
+                state: that.state,
+                props: that.props
             }
             chainDummy.__id = node.id
             chainDummy.__index = index
             chainDummy.__callee = item
             chainDummy.__arguments = xArgs
-            chainDummy.__proto__ = this.__proto__
+            chainDummy.__proto__ = that.__proto__
 
             xArgs.unshift(chainDummy)
-            item.apply(this.props._context, xArgs)
-        }.bind(this))
+            item.apply(that.props._context, xArgs)
+        })
         return this
     },
 
