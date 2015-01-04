@@ -1,5 +1,8 @@
 ## ChangeLog for: chainjs
 
+## Version 0.1.4 - 2015/1/4
+
+- [Feature] add each() api for call each step's handlers in sequeue
 
 ## Version 0.1.2 - 2014/12/3
 
