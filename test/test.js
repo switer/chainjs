@@ -7,7 +7,14 @@ describe('chainjs', function () {
     /**
      *  comment
      **/
-    describe('#Constructor', function () {
+    describe('#Constructor Chain()', function () {
+        it('Instance then run next step', function (done) {
+            Chain()
+                .then(function () {
+                    done()
+                })
+                .start()
+        })
         it('Run first step after start', function (done) {
             Chain(function (chain) {
                 done()
@@ -345,6 +352,30 @@ describe('chainjs', function () {
             })
             .then(function (chain, data) {
                 assert.equal(data, 'some step 1', 'Uncorrect passed data from last step')
+                done()
+            })
+            .start()
+        })
+    })
+    /**
+     *  comment
+     **/
+    describe('#each', function () {
+        it('Run after one handler done in last step', function (done) {
+            var steps = ''
+            Chain()
+            .each(function (chain) {
+                steps += 'A'
+                chain.next()
+            }, function (chain) {
+                steps += 'B'
+                chain.next()
+            }, function (chain) {
+                steps += 'C'
+                chain.next()
+            })
+            .then(function () {
+                assert.equal(steps, 'ABC', 'Last step need only call each handlers')
                 done()
             })
             .start()

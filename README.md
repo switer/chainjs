@@ -72,6 +72,12 @@ When call chain.next in which handler of "some" step will be over current step.
 Chain(func).then(func1).some(funcA1, funcA2, funcA3)
 ```
 
+### .each(func, func1, ..., funcN)
+Call each handlers in sequence.
+```javascript
+Chain(func).then(func1).each(funcA1, funcA2, funcA3)
+```
+
 ### .start(data)
 Start running the chain, and could pass data to initial step.
 ```javascript

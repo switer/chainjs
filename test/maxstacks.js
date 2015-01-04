@@ -14,13 +14,10 @@ var chain = Chain(function (chain, msg) {
 
 
 for (var i = 0 ; i < 1200; i ++) {
-    // !function (index) {
-        chain.then(function (chain, param) {
-            // console.log('Chain step ' + index );
-            console.log(param.name);
-            chain.next({name: 'switer'});
-        });
-    // }(i);
+    chain.then(function (chain, param) {
+        console.log(param.name);
+        chain.next({name: 'switer'});
+    });
 }
 chain.final(function () {
     console.timeEnd('chain use time');

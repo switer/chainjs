@@ -83,7 +83,7 @@ var utils = {
 function Bootstrap () {
     var chain = new Chain()
     if (arguments.length) {
-        pushNode.apply(chain, utils.type(arguments[0]) == 'array' ? arguments[0]:arguments)
+        pushSteps(chain, arguments)
     }
     return chain
 }
@@ -104,6 +104,9 @@ function pushNode( /*handler1, handler2, ..., handlerN*/ ) {
     node.id = id
     return node
 }
+function pushSteps (chain, args) {
+    return pushNode.apply(chain, utils.type(args[0]) == 'array' ? args[0]:args)
+}
 
 function noop () {}
 function setAlltoNoop (obj, methods) {
@@ -116,15 +119,25 @@ utils.merge(Chain.prototype, {
     /**
      *  Define a chain node
      **/
-    then: function(/*steps*/) {
+    then: function() {
         if (this._destroy) return
-        pushNode.apply(this, utils.type(arguments[0]) == 'array' ? arguments[0]:arguments)
+        pushSteps(this, arguments)
         return this
     },
-    some: function(/*steps*/) {
+    some: function() {
         if (this._destroy) return
-        var node = pushNode.apply(this, utils.type(arguments[0]) == 'array' ? arguments[0]:arguments)
+        var node = pushSteps(this, arguments)
         if (node.items.length) node.type = 'some'
+        return this
+    },
+    each: function () {
+        if (this._destroy) return
+        var that = this
+        var args = utils.slice(arguments)
+        args = utils.type(args[0]) == 'array' ? args[0]:args
+        args.forEach(function (item) {
+            pushNode.call(that, item)
+        })
         return this
     },
     /**
@@ -156,7 +169,7 @@ utils.merge(Chain.prototype, {
             if (this._nodes.isLast(this.__id)) return this.end.apply(this, arguments)
         }
 
-        // GET next node
+        // Get next node
         node = this.__id ? this._nodes.next(this.__id):this._nodes.first()
         // node handler is not set
         if (!node.items.length) return
