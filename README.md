@@ -2,8 +2,7 @@ chainjs
 =======
 ![logo](http://switer.qiniudn.com/chain.png)
 
-Chained async steps calling.Compare to Promise is more simple and clear. I has use it in node.js backend and browser
-client case.
+An asynchronous callback's flow controller, chaining async function callbacks. simple and clear than using promise. I use it in node.js server and webapp.
 
 ## Install
 
@@ -21,15 +20,15 @@ Chain(function (chain) {
         console.log('initialize');
         chain.next('none');
     })
-    .some(function () {
+    .some(function (chain) {
         chain.wait(300, 'then go to next')
-    }, function () {
+    }, function (chain) {
         chain.wait(200, 'then go to next')
-    }, function () {
+    }, function (chain) {
         chain.wait(100, 'then go to next')
     })
     .then(function (chain, data) {
-        console.log(data); // --> none
+        console.log(data); // --> then go to next
         chain.next('say hello');
     })
     .final(function (chain, data) {
