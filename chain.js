@@ -72,6 +72,9 @@ var utils = {
         try {
             handler.apply(context, args)
         } catch (e) {}
+    },
+    type: function (obj) {
+        return /\[object ([a-zA-Z]+)\]/.exec(Object.prototype.toString.call(obj))[1].toLowerCase()
     }
 }
 /*******************************
@@ -79,7 +82,9 @@ var utils = {
 *******************************/
 function Bootstrap () {
     var chain = new Chain()
-    pushNode.apply(chain, arguments)
+    if (arguments.length) {
+        pushNode.apply(chain, utils.type(arguments[0]) == 'array' ? arguments[0]:arguments)
+    }
     return chain
 }
 /**
@@ -111,14 +116,14 @@ utils.merge(Chain.prototype, {
     /**
      *  Define a chain node
      **/
-    then: function() {
+    then: function(/*steps*/) {
         if (this._destroy) return
-        pushNode.apply(this, arguments)
+        pushNode.apply(this, utils.type(arguments[0]) == 'array' ? arguments[0]:arguments)
         return this
     },
-    some: function() {
+    some: function(/*steps*/) {
         if (this._destroy) return
-        var node = pushNode.apply(this, arguments)
+        var node = pushNode.apply(this, utils.type(arguments[0]) == 'array' ? arguments[0]:arguments)
         if (node.items.length) node.type = 'some'
         return this
     },
@@ -211,7 +216,7 @@ utils.merge(Chain.prototype, {
         // get data value by key
         else if (key && !data) return this._data[key]
             // return all data of currently chain
-        else return util.merge({}, this._data)
+        else return utils.merge({}, this._data)
     },
     start: function() {
         if (this._end || this._destroy) return
