@@ -44,34 +44,13 @@ var utils = {
         return Array.prototype.slice.call(array)
     },
     /**
-     *  Function.bind
-     */
-    bind: function(func, context) {
-        if (func.bind) return func.bind(context)
-        var args = this.slice(arguments)
-        args.splice(0, 2)
-        return function() {
-            func.apply(context, args.concat(arguments))
-        }
-    },
-    /**
-     *  Merge Two Object to destObj
+     *  Merge for extObj to obj
      **/
     merge: function(obj, extObj) {
         this.each(extObj, function(value, key) {
             if (extObj.hasOwnProperty(key)) obj[key] = value
         })
         return obj
-    },
-    /**
-     *  Function call simple encapsulation, use try-catch
-     */
-    invoke: function(handler, context) {
-        var args = this.slice(arguments)
-        args = args.pop()
-        try {
-            handler.apply(context, args)
-        } catch (e) {}
     },
     type: function (obj) {
         return /\[object ([a-zA-Z]+)\]/.exec(Object.prototype.toString.call(obj))[1].toLowerCase()
@@ -91,16 +70,20 @@ function Bootstrap () {
  *  Chainjs Constructor
  */
 function Chain() {
-    this._context = this
-    this._data = {}
-    this._nodes = new LinkNodes()
-    this._finals =[]
+    this.props = {}
+    this.state = {}
+
+    this.props._context = this
+    this.props._data = {}
+    this.props._nodes = new LinkNodes()
+    this.props._finals =[]
 }
 function pushNode( /*handler1, handler2, ..., handlerN*/ ) {
     var node = {
-        items: utils.slice(arguments)
+        items: utils.slice(arguments),
+        state: {}
     }
-    var id = this._nodes.add(node)
+    var id = this.props._nodes.add(node)
     node.id = id
     return node
 }
@@ -120,18 +103,18 @@ utils.merge(Chain.prototype, {
      *  Define a chain node
      **/
     then: function() {
-        if (this._destroy) return
+        if (this.state._destroy) return
         pushSteps(this, arguments)
         return this
     },
     some: function() {
-        if (this._destroy) return
+        if (this.state._destroy) return
         var node = pushSteps(this, arguments)
         if (node.items.length) node.type = 'some'
         return this
     },
     each: function () {
-        if (this._destroy) return
+        if (this.state._destroy) return
         var that = this
         var args = utils.slice(arguments)
         args = utils.type(args[0]) == 'array' ? args[0]:args
@@ -145,53 +128,54 @@ utils.merge(Chain.prototype, {
      *  Check current node states and execulate nextNode
      **/
     next: function() {
-        if (this._end || this._destroy) return
-        var that = this
+        if (this.state._end || this.state._destroy) return
         var args = utils.slice(arguments)
         var node
 
         if (this.__id) {
-            node = this._nodes.get(this.__id)
+            node = this.props._nodes.get(this.__id)
             if (node._isDone) return
-            else if (node._multiple && node.type == 'some') {
-                if (!node._pending) return
-                if (~node._dones.indexOf(this.__index)) node._dones.push(this.__index)
-                if (node._dones.length >= 1) return
-                node._pending = true
+            else if (node.state._multiple && node.type == 'some') {
+                if (!node.state._pending) return
+                if (~node.state._dones.indexOf(this.__index)) node.state._dones.push(this.__index)
+                if (node.state._dones.length >= 1) return
+                node.state._pending = true
             } 
-            else if (node._multiple) {
-                if (!node._pending) return
-                if (!~node._dones.indexOf(this.__index)) node._dones.push(this.__index)
-                if (node._dones.length != node.items.length) return
-                node._pending = true
+            else if (node.state._multiple) {
+                if (!node.state._pending) return
+                if (!~node.state._dones.indexOf(this.__index)) node.state._dones.push(this.__index)
+                if (node.state._dones.length != node.items.length) return
+                node.state._pending = true
             }
             node._isDone = true
-            if (this._nodes.isLast(this.__id)) return this.end.apply(this, arguments)
+            if (this.props._nodes.isLast(this.__id)) return this.end.apply(this, arguments)
         }
 
         // Get next node
-        node = this.__id ? this._nodes.next(this.__id):this._nodes.first()
+        node = this.__id ? this.props._nodes.next(this.__id):this.props._nodes.first()
         // node handler is not set
         if (!node.items.length) return
         // Mutiple handlers in a node
         if (node.items.length > 1) {
-            node._multiple = true
-            node._pending = true
-            node._dones = []
+            node.state._multiple = true
+            node.state._pending = true
+            node.state._dones = []
         }
         utils.each(node.items, function(item, index) {
             var xArgs = args.slice()
-            var chainDummy = {}
-            utils.merge(chainDummy, that)
+            var chainDummy = {
+                state: this.state,
+                props: this.props
+            }
             chainDummy.__id = node.id
             chainDummy.__index = index
             chainDummy.__callee = item
             chainDummy.__arguments = xArgs
-            chainDummy.__proto__ = that.__proto__
+            chainDummy.__proto__ = this.__proto__
 
             xArgs.unshift(chainDummy)
-            item.apply(that._context, xArgs)
-        })
+            item.apply(this.props._context, xArgs)
+        }.bind(this))
         return this
     },
 
@@ -200,14 +184,14 @@ utils.merge(Chain.prototype, {
      *  Run current step once again
      **/
     retry: function () {
-        if (this._end || this._destroy) return
-        this.__callee.apply(this._context, this.__arguments)
+        if (this.state._end || this.state._destroy) return
+        this.__callee.apply(this.props._context, this.__arguments)
     },
     /**
      *  @RuntimeMethod only be called in runtime
      **/
     wait: function(time) {
-        if (this._destroy) return
+        if (this.state._destroy) return
         var that = this
         var args = utils.slice(arguments)
         args.shift()
@@ -220,50 +204,57 @@ utils.merge(Chain.prototype, {
      *  Save, Update, Get data in current chain instance
      */
     data: function(key, data) {
-        if (this._destroy) return
+        if (this.state._destroy) return
+        var args = utils.slice(arguments)
+        var len = args.length
         // set data
-        if (key && data) {
-            this._data[key] = data
+        if (len >= 2 ) {
+            this.props._data[key] = data
             return this
         }
         // get data value by key
-        else if (key && !data) return this._data[key]
+        else if (len === 1 && utils.type(key) == 'object') {
+            for (var k in key) {
+                 this.props._data[k] = key[k]
+            }
+        }
+        else if (len === 1) return this.props._data[key]
             // return all data of currently chain
-        else return utils.merge({}, this._data)
+        else return utils.merge({}, this.props._data)
     },
     start: function() {
-        if (this._end || this._destroy) return
+        if (this.state._end || this.state._destroy) return
 
-        this._running = true
+        this.state._running = true
         this.next.apply(this, arguments)
         return this
     },
     end: function() {
-        if (this._end || this._destroy) return
-        this._end = true
-        utils.batch.apply(utils, [this._context, this._finals, this].concat(utils.slice(arguments)) )
+        if (this.state._end || this.state._destroy) return
+        this.state._end = true
+        utils.batch.apply(utils, [this.props._context, this.props._finals, this].concat(utils.slice(arguments)) )
         return this
     },
     final: function (handler) {
-        if (this._destroy) return
-        this._finals.push(handler)
+        if (this.state._destroy) return
+        this.props._finals.push(handler)
         return this
     },
     /**
      *  @RuntimeMethod can be call in runtime
      **/
     destroy: function() {
-        this._destroy = true
-        this._context = null
-        this._data = null
-        this._nodes = null
-        this._finals = null
+        this.state._destroy = true
+        this.props._context = null
+        this.props._data = null
+        this.props._nodes = null
+        this.props._finals = null
         setAlltoNoop(this, ['then', 'some', 'next', 'wait', 'data', 'start', 'end', 'final', 'destroy'])
         return this
     },
     context: function(ctx) {
-        if (this._destroy) return
-        this._context = ctx
+        if (this.state._destroy) return
+        this.props._context = ctx
         return this
     }
 })
@@ -289,29 +280,30 @@ utils.merge(LinkNodes.prototype, {
     isLast: function (id) {
         return this._link.indexOf(id) === this._link.length - 1
     },
-    exist: function(id) {
-        return !!(~this._link.indexOf(id))
-    },
     first: function() {
         return this._map[this._link[0]]
     },
     get: function(id) {
         return this._map[id]
     },
-    size: function () {
-        return this._link.length
-    },
     next: function(id) {
         var cursor = this._link.indexOf(id) + 1
         return this._map[this._link[cursor]]
+    }
+    /*,
+    exist: function(id) {
+        return !!(~this._link.indexOf(id))
+    },
+    size: function () {
+        return this._link.length
     },
     remove: function(id) {
         var index = this._link.indexOf(id)
         if (~index) this._link.splice(index, 1)
         return this
     }
+    */
 })
-
 
 
 // AMD/CMD/node/bang
