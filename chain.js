@@ -7,7 +7,7 @@
  *  https://github.com/switer/chainjs/blob/master/LICENSE
  */
 
-'use strict;'
+'use strict';
 
 /**
  *  Util functions
