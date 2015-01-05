@@ -270,7 +270,7 @@ utils.merge(Chain.prototype, {
         this.props._data = null
         this.props._nodes = null
         this.props._finals = null
-        setAlltoNoop(this, ['then', 'some', 'next', 'wait', 'data', 'start', 'end', 'final', 'destroy'])
+        setAlltoNoop(this, ['then', 'some', 'next', 'retry', 'wait', 'data', 'start', 'end', 'final', 'destroy'])
         return this
     },
     context: function(ctx) {
