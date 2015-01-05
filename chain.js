@@ -38,6 +38,15 @@ var utils = {
         })
     },
     /**
+     *  binding this context
+     */
+    bind: function(fn, ctx) {
+        if (fn.bind) return fn.bind(ctx)
+        return function () {
+            fn.apply(ctx, arguments)
+        }
+    },
+    /**
      *  Array.slice
      */
     slice: function(array) {
@@ -65,6 +74,17 @@ function Bootstrap () {
         pushSteps(chain, arguments)
     }
     return chain
+}
+/**
+ *  Turn a regular node function into chain function
+ */
+Bootstrap.thunk = function (fn) {
+    return function (chain) {
+        var args = utils.slice(arguments)
+        args.shift()
+        args.push(chain.next)
+        fn.apply(null, args)
+    }
 }
 /**
  *  Chainjs Constructor
@@ -118,7 +138,7 @@ utils.merge(Chain.prototype, {
         var that = this
         var args = utils.slice(arguments)
         args = utils.type(args[0]) == 'array' ? args[0]:args
-        args.forEach(function (item) {
+        utils.each(args, function (item) {
             pushNode.call(that, item)
         })
         return this
@@ -161,24 +181,25 @@ utils.merge(Chain.prototype, {
             node.state._pending = true
             node.state._dones = []
         }
+        var that = this
         utils.each(node.items, function(item, index) {
-            var xArgs = args.slice()
+            var xArgs = utils.slice(args)
             var chainDummy = {
-                state: this.state,
-                props: this.props
+                state: that.state,
+                props: that.props
             }
             chainDummy.__id = node.id
             chainDummy.__index = index
             chainDummy.__callee = item
             chainDummy.__arguments = xArgs
-            chainDummy.__proto__ = this.__proto__
+            chainDummy.__proto__ = that.__proto__
+            chainDummy.next = utils.bind(chainDummy.__proto__.next, chainDummy)
 
             xArgs.unshift(chainDummy)
-            item.apply(this.props._context, xArgs)
-        }.bind(this))
+            item.apply(that.props._context, xArgs)
+        })
         return this
     },
-
     /**
      *  @RuntimeMethod only be called in runtime
      *  Run current step once again

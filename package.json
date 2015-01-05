@@ -1,6 +1,6 @@
 {
   "name": "chainjs",
-  "version": "0.1.4",
+  "version": "0.1.7",
   "description": "Chainjs call each async function step by step, let async function callback fairily.",
   "main": "chain.js",
   "scripts": {
@@ -15,10 +15,11 @@
   "keywords": [
     "chain",
     "async",
-    "call",
     "callback",
     "javascript",
-    "step"
+    "step",
+    "flow",
+    "control"
   ],
   "author": "switer",
   "license": "MIT",

@@ -2,7 +2,7 @@ chainjs
 =======
 ![logo](http://switer.qiniudn.com/chain.png)
 
-An asynchronous callback's flow controller, chaining async function callbacks. simple and clear than using promise. I use it in node.js server and webapp.
+An asynchronous callback's flow controller, chaining async function callbacks. Async methods calling flow make easy. I use it in node.js server and webapp.
 
 ## Install
 
@@ -21,14 +21,14 @@ Chain(function (chain) {
         chain.next('none');
     })
     .some(function (chain) {
-        chain.wait(300, 'then go to next')
+        chain.wait(300, 'then go to next in step 1')
     }, function (chain) {
-        chain.wait(200, 'then go to next')
+        chain.wait(200, 'then go to next in step 2')
     }, function (chain) {
-        chain.wait(100, 'then go to next')
+        chain.wait(100, 'then go to next in step 3')
     })
     .then(function (chain, data) {
-        console.log(data); // --> then go to next
+        console.log(data); // --> then go to next in step 3
         chain.next('say hello');
     })
     .final(function (chain, data) {
@@ -42,19 +42,19 @@ Chain(function (chain) {
 Each step's handler has been passed the `chain` instance as the first argument
 
 ### Chain(func, func1, ..., funcN)
-Instancing a chain and define a chain step
+Instancing a chain, if arguments is not empty, it will be call .then() with arguments automatically.
 ```javascript
 Chain(func /*, func1, ..., funcN*/);
 ```
 
 ### .then(func, func1, ..., funcN)
-Define chain steps, if a then step has multiple functions, step over after each func call chain.next()
+Define a chain step, if a then step has multiple functions, it need each function call chain.next() to goto next step.
 ```javascript
-Chain(func).then(func1).then(funcA1, funcA2, funcA3)
+Chain().then(funcA1, funcA2, funcA3).then(func1)
 ```
 
 ### .retry()
-Call current step handler once again (recursive).
+Call current function once again (use for recursive).
 ```javascript
 var flag
 Chain(function (chain, data) {
@@ -67,13 +67,27 @@ Chain(function (chain, data) {
 ```
 
 ### .some(func, func1, ..., funcN)
-When call chain.next in which handler of "some" step will be over current step.
+Define a chain step, if a then step has multiple functions, it need any function of this step calling chain.next() only once to goto next step.
 ```javascript
-Chain(func).then(func1).some(funcA1, funcA2, funcA3)
+Chain(func).some(function (chain) {
+    setTimeout(function () {
+        chain.next()
+    }, 100)
+}, function (chain) {
+    setTimeout(function () {
+        chain.next()
+    }, 1000)
+}, function (chain) {
+    setTimeout(function () {
+        chain.next()
+    }, 500)
+}).then(function () {
+    // this step will be run after 100ms.
+})
 ```
 
 ### .each(func, func1, ..., funcN)
-Call each handlers in sequence.
+Define a chain step, call each handlers of this step in sequence. In this step, each function call chain.next() to call next function. In orders from left to right of arguments
 ```javascript
 Chain(func).then(func1).each(funcA1, funcA2, funcA3)
 ```
@@ -81,11 +95,13 @@ Chain(func).then(func1).each(funcA1, funcA2, funcA3)
 ### .start(data)
 Start running the chain, and could pass data to initial step.
 ```javascript
-Chain(func).then(func1).then(func2).start();
+Chain(function (chain, initData) {
+    
+}).then(func1).then(func2).start(initData);
 ```
 
 ### .destroy()
-Destroy the chain, mark the chain as ending and destroy local variable, but not call ending funtions
+Destroy the chain, mark the chain as ending and destroy local variable, but don't calling final funtions.
 
 __notice:__ after use chain.destroy(), the chain contiue execute current step handler, 
 so use with return for stoping current step excution
@@ -120,17 +136,55 @@ chain.end(data);
 ```
 
 ### .final(finalHandler)
-Pushing final handler which will be invoke when chain.end() or chain step is ending
+Define a final step, witch will be invoke after call chain.end() or all step of this chain is over.
+```javascript
+Chain(function (chain) {
+    ...
+    chain.end('ending initial step')
+
+}).then(function (chain) {
+
+    ...
+    chain.next('step 2 calling')
+
+}).final(function (chain, data) {
+    console.log(data) // --> ending initial step
+})
+```
 
 ### .data(savingData)
 Saving data in current chain
 ```javascript
 // set data
 chain.data('param', param);
+// set multiple data in batch
+chain.data({
+    'param1': param1,
+    'param2': param2,
+    'param3': param3
+});
 // get data
 chain.data('param');
 // get all data
 var chainData = chain.data();
+```
+
+### .thunk(func)
+Turn a regular node function into chainjs thunk.
+```javascript
+ function handler1 (param, callback) {
+    callback(param + 'Chain through step1, ')
+}
+function handler2 (param, callback) {
+    callback(param + 'step2')
+}
+Chain()
+    .then(Chain.thunk(handler1))
+    .then(Chain.thunk(handler2))
+    .final(function (chain, data) {
+        console.log(data); // --> Initialize! Chain through step1, step2
+    })
+    .start('Initialize! ')
 ```
 
 ## Testing
