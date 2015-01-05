@@ -114,6 +114,19 @@ describe('chainjs', function () {
             })
             .start()
         })
+        it('Call next without "chain." then goto next step correctly', function (done) {
+            Chain(function (chain) {
+                    setTimeout(chain.next, 100)
+                })
+                .then(function (chain) {
+                    setTimeout(chain.next.bind(null, 'send to next'))
+                })
+                .final(function (chain, data) {
+                    assert.equal(data, 'send to next', 'Uncorrect passed data from last step')
+                    done()
+                })
+                .start()
+        })
     })
     /**
      *  comment
