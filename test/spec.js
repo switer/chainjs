@@ -504,6 +504,27 @@ describe('chainjs', function () {
     /**
      *  comment
      **/
+     describe('#thunk', function () {
+        it('Regular node function into chain function', function (done) {
+            function handler1 (param, callback) {
+                callback(param + 'Chain through step1, ')
+            }
+            function handler2 (param, callback) {
+                callback(param + 'step2')
+            }
+            Chain()
+                .then(Chain.thunk(handler1))
+                .then(Chain.thunk(handler2))
+                .final(function (chain, data) {
+                    assert.equal(data, 'Initialize! Chain through step1, step2', 'thunk convert is uncorrect')
+                    done()
+                })
+                .start('Initialize! ')
+        })
+    })
+    /**
+     *  comment
+     **/
     describe('#wait', function () {
         var ctx = {}
         it('Waiting 200ms to run next step', function (done) {

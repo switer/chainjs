@@ -1,5 +1,8 @@
 ## ChangeLog for: chainjs
 
+## Version 0.1.7 - 2015/1/5
+- [Feature] add Chain.thunk() for turn a regular node function into chainjs thunk  
+
 ## Version 0.1.6 - 2015/1/4
 - [Feature] remove ES5 function usage(forEach, bind)
 

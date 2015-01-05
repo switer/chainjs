@@ -136,17 +136,55 @@ chain.end(data);
 ```
 
 ### .final(finalHandler)
-Pushing final handler which will be invoke when chain.end() or chain step is ending
+Define a final step, witch will be invoke after call chain.end() or all step of this chain is over.
+```javascript
+Chain(function (chain) {
+    ...
+    chain.end('ending initial step')
+
+}).then(function (chain) {
+
+    ...
+    chain.next('step 2 calling')
+
+}).final(function (chain, data) {
+    console.log(data) // --> ending initial step
+})
+```
 
 ### .data(savingData)
 Saving data in current chain
 ```javascript
 // set data
 chain.data('param', param);
+// set multiple data in batch
+chain.data({
+    'param1': param1,
+    'param2': param2,
+    'param3': param3
+});
 // get data
 chain.data('param');
 // get all data
 var chainData = chain.data();
+```
+
+### .thunk(func)
+Turn a regular node function into chainjs thunk.
+```javascript
+ function handler1 (param, callback) {
+    callback(param + 'Chain through step1, ')
+}
+function handler2 (param, callback) {
+    callback(param + 'step2')
+}
+Chain()
+    .then(Chain.thunk(handler1))
+    .then(Chain.thunk(handler2))
+    .final(function (chain, data) {
+        console.log(data); // --> Initialize! Chain through step1, step2
+    })
+    .start('Initialize! ')
 ```
 
 ## Testing

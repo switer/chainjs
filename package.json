@@ -15,10 +15,11 @@
   "keywords": [
     "chain",
     "async",
-    "call",
     "callback",
     "javascript",
-    "step"
+    "step",
+    "flow",
+    "control"
   ],
   "author": "switer",
   "license": "MIT",

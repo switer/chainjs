@@ -38,6 +38,15 @@ var utils = {
         })
     },
     /**
+     *  binding this context
+     */
+    bind: function(fn, ctx) {
+        if (fn.bind) return fn.bind(ctx)
+        return function () {
+            fn.apply(ctx, arguments)
+        }
+    },
+    /**
      *  Array.slice
      */
     slice: function(array) {
@@ -65,6 +74,17 @@ function Bootstrap () {
         pushSteps(chain, arguments)
     }
     return chain
+}
+/**
+ *  Turn a regular node function into chain function
+ */
+Bootstrap.thunk = function (fn) {
+    return function (chain) {
+        var args = utils.slice(arguments)
+        args.shift()
+        args.push(chain.next)
+        fn.apply(null, args)
+    }
 }
 /**
  *  Chainjs Constructor
@@ -173,13 +193,13 @@ utils.merge(Chain.prototype, {
             chainDummy.__callee = item
             chainDummy.__arguments = xArgs
             chainDummy.__proto__ = that.__proto__
+            chainDummy.next = utils.bind(chainDummy.__proto__.next, chainDummy)
 
             xArgs.unshift(chainDummy)
             item.apply(that.props._context, xArgs)
         })
         return this
     },
-
     /**
      *  @RuntimeMethod only be called in runtime
      *  Run current step once again
