@@ -253,7 +253,7 @@ npm test
 ```
 
 ## Example
-See [using chainjs control business logic flow example](https:/github.com/switer/chainjs-flow-control-demo)
+See [using chainjs control business logic flow example](https://github.com/switer/chainjs-flow-control-demo)
 
 ```javascript
 var Chain = require('chainjs');
