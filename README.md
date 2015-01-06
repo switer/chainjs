@@ -167,7 +167,7 @@ Chain(function (chain) {
 ```
 
 ### .wait(time, data, data1, ..., dataN)
-Waiting some time then call next step
+Waiting some time then call next step.Just a shortcut of `setTimeout(function () {chain.next()}, time)`.
 ```javascript
 // pass params to next step handler
 chain.wait(5000, data); // wait 5s then call next
@@ -253,6 +253,7 @@ npm test
 ```
 
 ## Example
+See [using chainjs control business logic flow example](https:/github.com/switer/chainjs-flow-control-demo)
 
 ```javascript
 var Chain = require('chainjs');
