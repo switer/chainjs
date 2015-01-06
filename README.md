@@ -120,6 +120,57 @@ chain.next();
 chain.next(data);
 ```
 
+### .branch(branchName, func)
+Define a branch step, only using `chain.nextTo(branchName)` to goto branch step. 
+**Notice**: Call `chain.next()` from last step will skip next branch step.
+```javascript
+Chain(function () {
+
+    chain.nextTo('branchA')
+    chain.next()
+
+}).then(function () {
+
+    throw new Error('This step should not be called')
+
+}).branch('branchA', function () {
+
+    chain.next()
+
+}).branch('branchB', function () {
+
+    throw new Error('This step should not be called')
+
+}).final(function () {
+    // done
+}).start()
+```
+
+### .nextTo(nextParams)
+Go to next branch.
+```javascript
+Chain(function () {
+
+    chain.nextTo('branchA')
+}).then(function () {
+
+    throw new Error('This step should not be called')
+}).branch('branchA', function () {
+    chain.next()
+})
+```
+**Notice**: nextTo() should not goto previous step
+```javascript
+Chain(function () {
+
+    chain.next()
+}).branch('branchA', function () {
+    chain.next()
+}).then(function () {
+    chain.nextTo('branchA') // will throw an error
+}).start()
+```
+
 ### .wait(time, nextParams)
 Waiting some time then call next step
 ```javascript
@@ -185,6 +236,19 @@ Chain()
         console.log(data); // --> Initialize! Chain through step1, step2
     })
     .start('Initialize! ')
+```
+
+### .context(ctx)
+Binding "this" to specified ctx for all functions of each step of current chain. 
+```js
+Chain(function () {
+    console.log(this); // --> "abc"
+})
+.then(function () {
+    console.log(this); // --> "abc"
+})
+.context('abc')
+.start()
 ```
 
 ## Testing

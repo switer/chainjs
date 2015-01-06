@@ -1,5 +1,8 @@
 ## ChangeLog for: chainjs
 
+## Version 0.1.9 - 2015/1/6
+- [Feature] add .nextTo() and .branch() methods for branch goto flow
+
 ## Version 0.1.7 - 2015/1/5
 - [Feature] add Chain.thunk() for turn a regular node function into chainjs thunk  
 

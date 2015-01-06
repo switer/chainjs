@@ -131,6 +131,95 @@ describe('chainjs', function () {
     /**
      *  comment
      **/
+    describe('#nextTo', function () {
+        var ctx = {}
+        it('Goto branchA use .nextTo() and call next', function (done) {
+            Chain(function (chain) {
+                chain.nextTo('branchA', true)
+                chain.next()
+            })
+            .then(function () {
+                assert(false, 'This step should not be called')
+                chain.next(false)
+            })
+            .branch('branchA', function (chain, fromGoto) {
+                assert(fromGoto, 'This step should be called by chain.nextTo()')
+                chain.next(true)
+            })
+            .then(function (chain, fromBranch) {
+                assert(fromBranch, 'This step should be called from branchA step')
+                done()
+            })
+            .start()
+        })
+        it('Shold not goback to previous step use .nextTo()', function (done) {
+            Chain(function (chain) {
+                chain.nextTo('branchB', true)
+            })
+            .branch('branchA', function (chain) {
+                assert(false, 'This step should not be called')
+                chain.next()
+            })
+            .then(function () {
+                assert(false, 'This step should not be called')
+                chain.next()
+            })
+            .branch('branchB', function (chain, fromGoto) {
+                assert(fromGoto, 'This step should be call by chain.nextTo()')
+                try {
+                    chain.nextTo('branchA')
+                } catch (e) {
+                    done()
+                }
+            })
+            .start()
+        })
+
+        it('Call .next() should skip branch step', function (done) {
+            Chain(function (chain) {
+                chain.next(true)
+            })
+            .branch('branchA', function (chain) {
+                assert(false, 'This step should not be called')
+                chain.next()
+            })
+            .then(function (chain, fromFirst) {
+                assert(fromFirst, 'This step call by first step')
+                chain.nextTo('branchB', true)
+            })
+            .branch('branchB', function (chain, fromGoto) {
+                assert(fromGoto, 'This step should be called by chain.nextTo()')
+                chain.next()
+            })
+            .branch('branchC', function (chain, fromGoto) {
+                assert(fromGoto, 'This step should be called by chain.nextTo()')
+            })
+            .final(function () {
+                done()
+            })
+            .start()
+        })
+    })
+    /**
+     *  comment
+     **/
+    describe('#branch', function () {
+        var ctx = {}
+        it('Chain only then branch step and has no normal step', function (done) {
+            Chain()
+            .branch('branch', function () {
+                assert(false, 'This step should be called by .start()')
+            })
+            .final(function () {
+                done()
+            })
+            .context(ctx)
+            .start()
+        })
+    })
+    /**
+     *  comment
+     **/
     describe('#context', function () {
         var ctx = {}
         it('Use custom context', function (done) {
