@@ -92,7 +92,7 @@ Define a chain step, call each handlers of this step in sequence. In this step, 
 Chain(func).then(func1).each(funcA1, funcA2, funcA3)
 ```
 
-### .start(data)
+### .start(data, data1, ..., dataN)
 Start running the chain, and could pass data to initial step.
 ```javascript
 Chain(function (chain, initData) {
@@ -112,7 +112,7 @@ Chain(func).then(function (chain) {
 }).start();
 ```
 
-### .next(nextParams)
+### .next(data, data1, ..., dataN)
 Go to next step
 ```javascript
 chain.next();
@@ -123,52 +123,57 @@ chain.next(data);
 ### .branch(branchName, func)
 Define a branch step, only using `chain.nextTo(branchName)` to goto branch step. 
 Call `chain.next()` from last step will skip next branch step.
+```
+     -------------o
+     |            ↓
+o----o----->o---->o---->o
+```
+
 ```javascript
-Chain(function () {
+Chain(function (chain) {
     chain.nextTo('branchA')
     chain.next()
-}).then(function () {
+}).then(function (chain) {
     throw new Error('This step should not be called')
-}).branch('branchA', function () {
+}).branch('branchA', function (chain) {
     chain.next()
-}).branch('branchB', function () {
+}).branch('branchB', function (chain) {
     throw new Error('This step should not be called')
-}).final(function () {
+}).final(function (chain) {
     // done
 }).start()
 ```
 
-### .nextTo(branchName, [param, param, ...])
+### .nextTo(branchName, data, data1, ..., dataN)
 Go to next branch.
 ```javascript
-Chain(function () {
+Chain(function (chain) {
     chain.nextTo('branchA')
-}).then(function () {
+}).then(function (chain) {
     throw new Error('This step should not be called')
-}).branch('branchA', function () {
+}).branch('branchA', function (chain) {
     chain.next()
 })
 ```
 **Notice**: .nextTo() should not goto previous step
 ```javascript
-Chain(function () {
-
+Chain(function (chain) {
     chain.next()
-}).branch('branchA', function () {
+}).branch('branchA', function (chain) {
     chain.next()
-}).then(function () {
+}).then(function (chain) {
     chain.nextTo('branchA') // will throw an error
 }).start()
 ```
 
-### .wait(time, nextParams)
+### .wait(time, data, data1, ..., dataN)
 Waiting some time then call next step
 ```javascript
 // pass params to next step handler
 chain.wait(5000, data); // wait 5s then call next
 ```
 
-### .end(finalParams)
+### .end(data, data1, ..., dataN)
 End up chain steps, mark the chain as ending, for cross steps data sharing
 ```javascript
 chain.end();
