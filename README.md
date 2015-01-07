@@ -43,8 +43,11 @@ Each step's handler has been passed the `chain` instance as the first argument
 
 ### Chain(func, func1, ..., funcN)
 Instancing a chain, if arguments is not empty, it will be call .then() with arguments automatically.
+If first argument is type of `Array`, that argument will be passed as arguments.
 ```javascript
 Chain(func /*, func1, ..., funcN*/);
+// or 
+Chain([func, func1, funcN])
 ```
 
 ### .then(func, func1, ..., funcN)
@@ -52,6 +55,13 @@ Define a chain step, if a then step has multiple functions, it need each functio
 ```javascript
 Chain().then(funcA1, funcA2, funcA3).then(func1)
 ```
+If first argument is type of `Array`, that argument will be passed as arguments.
+```javascript
+Chain.then([func1, func2, ..., funcN])
+// equal to 
+Chain.then(func1, func2, ..., funcN)
+```
+
 
 ### .retry()
 Call current function once again (use for recursive).
@@ -85,11 +95,23 @@ Chain(func).some(function (chain) {
     // this step will be run after 100ms.
 })
 ```
+If first argument is type of `Array`, that argument will be passed as arguments.
+```javascript
+Chain.some([func1, func2, ..., funcN])
+// equal to 
+Chain.some(func1, func2, ..., funcN)
+```
 
 ### .each(func, func1, ..., funcN)
 Define a chain step, call each handlers of this step in sequence. In this step, each function call chain.next() to call next function. In orders from left to right of arguments
 ```javascript
 Chain(func).then(func1).each(funcA1, funcA2, funcA3)
+```
+If first argument is type of `Array`, that argument will be passed as arguments.
+```javascript
+Chain.each([func1, func2, ..., funcN])
+// equal to 
+Chain.each(func1, func2, ..., funcN)
 ```
 
 ### .start(data, data1, ..., dataN)
