@@ -129,7 +129,7 @@ Chain.prototype = {
         }
         var that = this
         utils.each(node.items, function(item, index) {
-            var xArgs = utils.slice(args)
+            var xArgs = args
             var chainDummy = {
                 __id: node.id,
                 __index: index,
