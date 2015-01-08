@@ -1,5 +1,9 @@
 ## ChangeLog for: chainjs
 
+## Version 0.1.10 - 2015/1/6
+- [Optimize] Max functions call stack up to 2000
+- [Optimize] Remove calling argument.slice in step-function's iterator
+
 ## Version 0.1.9 - 2015/1/6
 - [Feature] add .nextTo() and .branch() methods for branch goto flow
 

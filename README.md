@@ -43,8 +43,11 @@ Each step's handler has been passed the `chain` instance as the first argument
 
 ### Chain(func, func1, ..., funcN)
 Instancing a chain, if arguments is not empty, it will be call .then() with arguments automatically.
+If first argument is type of `Array`, that argument will be passed as arguments.
 ```javascript
 Chain(func /*, func1, ..., funcN*/);
+// or 
+Chain([func, func1, funcN])
 ```
 
 ### .then(func, func1, ..., funcN)
@@ -52,6 +55,13 @@ Define a chain step, if a then step has multiple functions, it need each functio
 ```javascript
 Chain().then(funcA1, funcA2, funcA3).then(func1)
 ```
+If first argument is type of `Array`, that argument will be passed as arguments.
+```javascript
+Chain.then([func1, func2, ..., funcN])
+// equal to 
+Chain.then(func1, func2, ..., funcN)
+```
+
 
 ### .retry()
 Call current function once again (use for recursive).
@@ -85,14 +95,26 @@ Chain(func).some(function (chain) {
     // this step will be run after 100ms.
 })
 ```
+If first argument is type of `Array`, that argument will be passed as arguments.
+```javascript
+Chain.some([func1, func2, ..., funcN])
+// equal to 
+Chain.some(func1, func2, ..., funcN)
+```
 
 ### .each(func, func1, ..., funcN)
 Define a chain step, call each handlers of this step in sequence. In this step, each function call chain.next() to call next function. In orders from left to right of arguments
 ```javascript
 Chain(func).then(func1).each(funcA1, funcA2, funcA3)
 ```
+If first argument is type of `Array`, that argument will be passed as arguments.
+```javascript
+Chain.each([func1, func2, ..., funcN])
+// equal to 
+Chain.each(func1, func2, ..., funcN)
+```
 
-### .start(data)
+### .start(data, data1, ..., dataN)
 Start running the chain, and could pass data to initial step.
 ```javascript
 Chain(function (chain, initData) {
@@ -112,7 +134,7 @@ Chain(func).then(function (chain) {
 }).start();
 ```
 
-### .next(nextParams)
+### .next(data, data1, ..., dataN)
 Go to next step
 ```javascript
 chain.next();
@@ -122,63 +144,58 @@ chain.next(data);
 
 ### .branch(branchName, func)
 Define a branch step, only using `chain.nextTo(branchName)` to goto branch step. 
-**Notice**: Call `chain.next()` from last step will skip next branch step.
-```javascript
-Chain(function () {
+Call `chain.next()` from last step will skip next branch step.
+```
+     -------------o
+     |            ↓
+o----o----->o---->o---->o
+```
 
+```javascript
+Chain(function (chain) {
     chain.nextTo('branchA')
     chain.next()
-
-}).then(function () {
-
+}).then(function (chain) {
     throw new Error('This step should not be called')
-
-}).branch('branchA', function () {
-
+}).branch('branchA', function (chain) {
     chain.next()
-
-}).branch('branchB', function () {
-
+}).branch('branchB', function (chain) {
     throw new Error('This step should not be called')
-
-}).final(function () {
+}).final(function (chain) {
     // done
 }).start()
 ```
 
-### .nextTo(nextParams)
+### .nextTo(branchName, data, data1, ..., dataN)
 Go to next branch.
 ```javascript
-Chain(function () {
-
+Chain(function (chain) {
     chain.nextTo('branchA')
-}).then(function () {
-
+}).then(function (chain) {
     throw new Error('This step should not be called')
-}).branch('branchA', function () {
+}).branch('branchA', function (chain) {
     chain.next()
 })
 ```
-**Notice**: nextTo() should not goto previous step
+**Notice**: .nextTo() should not goto previous step
 ```javascript
-Chain(function () {
-
+Chain(function (chain) {
     chain.next()
-}).branch('branchA', function () {
+}).branch('branchA', function (chain) {
     chain.next()
-}).then(function () {
+}).then(function (chain) {
     chain.nextTo('branchA') // will throw an error
 }).start()
 ```
 
-### .wait(time, nextParams)
-Waiting some time then call next step
+### .wait(time, data, data1, ..., dataN)
+Waiting some time then call next step.Just a shortcut of `setTimeout(function () {chain.next()}, time)`.
 ```javascript
 // pass params to next step handler
 chain.wait(5000, data); // wait 5s then call next
 ```
 
-### .end(finalParams)
+### .end(data, data1, ..., dataN)
 End up chain steps, mark the chain as ending, for cross steps data sharing
 ```javascript
 chain.end();
@@ -258,6 +275,7 @@ npm test
 ```
 
 ## Example
+See [using chainjs control business logic flow example](https://github.com/switer/chainjs-flow-control-demo)
 
 ```javascript
 var Chain = require('chainjs');

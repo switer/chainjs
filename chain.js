@@ -128,23 +128,26 @@ Chain.prototype = {
             node.state._dones = []
         }
         var that = this
-        utils.each(node.items, function(item, index) {
-            var xArgs = utils.slice(args)
-            var chainDummy = {
-                __id: node.id,
-                __index: index,
-                __callee: item,
-                __arguments: xArgs,
+        if (node.items) {
+            for (var index = 0; index < node.items.length; index++) {
+                var item = node.items[index]
+                var xArgs = args
+                var chainDummy = {
+                    __id: node.id,
+                    __index: index,
+                    __callee: item,
+                    __arguments: xArgs,
 
-                state: that.state,
-                props: that.props
+                    state: that.state,
+                    props: that.props
+                }
+                chainDummy.__proto__ = that.__proto__
+                chainDummy.next = utils.bind(chainDummy.__proto__.next, chainDummy)
+
+                xArgs.unshift(chainDummy)
+                item.apply(that.props._context, xArgs)
             }
-            chainDummy.__proto__ = that.__proto__
-            chainDummy.next = utils.bind(chainDummy.__proto__.next, chainDummy)
-
-            xArgs.unshift(chainDummy)
-            item.apply(that.props._context, xArgs)
-        })
+        }
         return this
     },
     nextTo: function (branch) {
@@ -331,7 +334,8 @@ var utils = {
      *  binding this context
      */
     bind: function(fn, ctx) {
-        if (fn.bind) return fn.bind(ctx)
+        // native bind is easey to cause maxium call stack 
+        // if (fn.bind) return fn.bind(ctx)
         return function () {
             fn.apply(ctx, arguments)
         }
