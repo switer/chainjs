@@ -7,15 +7,15 @@ var chain = Chain(function (chain, msg) {
         // save param
         chain.data('chain:param', msg);
 
-        console.log(msg); //Hello world
+        // console.log(msg); //Hello world
         chain.next({message: 'Next step'});
         
     });
 
 
-for (var i = 0 ; i < 1200; i ++) {
+for (var i = 0 ; i < 2000; i ++) {
     chain.then(function (chain, param) {
-        console.log(param.name);
+        // console.log(param.name);
         chain.next({name: 'switer'});
     });
 }
