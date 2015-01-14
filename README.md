@@ -1,8 +1,7 @@
 chainjs
 =======
-
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/switer/chainjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 ![logo](http://switer.qiniudn.com/chain.png)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/switer/chainjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 An asynchronous callback's flow controller, chaining async function callbacks. Async methods calling flow make easy. I use it in node.js server and webapp.
 
