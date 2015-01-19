@@ -6,7 +6,8 @@
   "scripts": {
     "test": "npm run coverall",
     "mocha": "mocha test/test.js",
-    "coverall": "mocha --require blanket --reporter mocha-lcov-reporter ./test/test.js | ./node_modules/coveralls/bin/coveralls.js"
+    "coverall": "mocha --require blanket --reporter mocha-lcov-reporter ./test/test.js | ./node_modules/coveralls/bin/coveralls.js",
+    "cover-html": "mocha --require blanket --reporter html-cov ./test/test.js > coverage.html"
   },
   "repository": {
     "type": "git",
