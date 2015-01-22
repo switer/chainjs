@@ -5,6 +5,7 @@ chainjs
 [![Build Status](https://travis-ci.org/switer/chainjs.svg?branch=master)](https://travis-ci.org/switer/chainjs)
 [![Coverage Status](https://coveralls.io/repos/switer/chainjs/badge.svg?branch=master)](https://coveralls.io/r/switer/chainjs?branch=master)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/switer/chainjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![npm version](https://badge.fury.io/js/chainjs.svg)](http://badge.fury.io/js/chainjs)
 
 An asynchronous callback's flow controller, chaining async function callbacks. Async methods calling flow make easy. I use it in node.js server and webapp.
 
@@ -273,7 +274,7 @@ Chain(function () {
 ```
 
 ## Testing
-Chainjs using [mocha](http://mochajs.org/) for BDD test, run below cli to run testing in nodejs
+Chainjs's test framework is [mocha](http://mochajs.org/), run below cli to run testing:
 ```bash
 npm test
 ```
