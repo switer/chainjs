@@ -64,7 +64,7 @@ Each step's handler has been passed the `chain` instance as the first argument.
 * Global API
     - [Chain()](#chainfunc-func1--funcn)
     - [then()](#thenfunc-func1--funcn)
-    - [some(func, \[, func1, ..., funcN\])](#somefunc-func1--funcn)
+    - [some()](#somefunc-func1--funcn)
     - [each()](#eachfunc-func1--funcn)
     - [branch()](#branchbranchname-func)
     - [context()](#contextctx)
@@ -84,6 +84,9 @@ Each step's handler has been passed the `chain` instance as the first argument.
 
 
 ### Chain(func, func1, ..., funcN)
+
+**[API Reference](#api)**
+
 Create a Chain instance.
 * if arguments is not empty, it will be call **.then()** with arguments automatically.
 * else If first param is type of `Array`, then first param will be passed as arguments.
@@ -94,6 +97,9 @@ Chain([func, func1, funcN])
 ```
 
 ### .then(func, func1, ..., funcN)
+
+**[API Reference](#api)**
+
 Define a chain step, if a then step has multiple functions, it need each function call chain.next() to goto next step.
 ```javascript
 Chain().then(funcA1, funcA2, funcA3).then(func1)
@@ -107,6 +113,9 @@ Chain.then(func1, func2, ..., funcN)
 
 
 ### .retry()
+
+**[API Reference](#api)**
+
 Call current function once again (use for recursive).
 ```javascript
 var flag
@@ -120,6 +129,9 @@ Chain(function (chain, data) {
 ```
 
 ### .some(func, [func1, ..., funcN])
+
+**[API Reference](#api)**
+
 Define a chain step, if a then step has multiple functions, it need any function of this step calling chain.next() only once to goto next step.
 ```javascript
 Chain(func).some(function (chain) {
@@ -146,6 +158,9 @@ Chain.some(func1, func2, ..., funcN)
 ```
 
 ### .each(func, func1, ..., funcN)
+
+**[API Reference](#api)**
+
 Define a chain step, call each handlers of this step in sequence. In this step, each function call chain.next() to call next function. In orders from left to right of arguments
 ```javascript
 Chain(func).then(func1).each(funcA1, funcA2, funcA3)
@@ -158,6 +173,9 @@ Chain.each(func1, func2, ..., funcN)
 ```
 
 ### .start(data, data1, ..., dataN)
+
+**[API Reference](#api)**
+
 Start running the chain, and could pass data to initial step.
 ```javascript
 Chain(function (chain, initData) {
@@ -166,6 +184,9 @@ Chain(function (chain, initData) {
 ```
 
 ### .destroy()
+
+**[API Reference](#api)**
+
 Destroy the chain, mark the chain as ending and destroy local variable, but don't calling final funtions.
 
 __notice:__ after use chain.destroy(), the chain contiue execute current step handler, 
@@ -178,6 +199,9 @@ Chain(func).then(function (chain) {
 ```
 
 ### .next(data, data1, ..., dataN)
+
+**[API Reference](#api)**
+
 Go to next step
 ```javascript
 chain.next();
@@ -186,6 +210,9 @@ chain.next(data);
 ```
 
 ### .branch(branchName, func)
+
+**[API Reference](#api)**
+
 Define a branch step, only using `chain.nextTo(branchName)` to goto branch step. 
 Call `chain.next()` from last step will skip next branch step.
 ```
@@ -210,6 +237,9 @@ Chain(function (chain) {
 ```
 
 ### .nextTo(branchName, data, data1, ..., dataN)
+
+**[API Reference](#api)**
+
 Go to next branch.
 ```javascript
 Chain(function (chain) {
@@ -232,6 +262,9 @@ Chain(function (chain) {
 ```
 
 ### .wait(time, data, data1, ..., dataN)
+
+**[API Reference](#api)**
+
 Waiting some time then call next step.Just a shortcut of `setTimeout(function () {chain.next()}, time)`.
 ```javascript
 // pass params to next step handler
@@ -239,6 +272,9 @@ chain.wait(5000, data); // wait 5s then call next
 ```
 
 ### .end(data, data1, ..., dataN)
+
+**[API Reference](#api)**
+
 End up chain steps, mark the chain as ending, for cross steps data sharing
 ```javascript
 chain.end();
@@ -247,6 +283,9 @@ chain.end(data);
 ```
 
 ### .final(finalHandler)
+
+**[API Reference](#api)**
+
 Define a final step, witch will be invoke after call chain.end() or all step of this chain is over.
 ```javascript
 Chain(function (chain) {
@@ -264,6 +303,9 @@ Chain(function (chain) {
 ```
 
 ### .data(savingData)
+
+**[API Reference](#api)**
+
 Saving data in current chain
 ```javascript
 // set data
@@ -281,6 +323,9 @@ var chainData = chain.data();
 ```
 
 ### .thunk(func)
+
+**[API Reference](#api)**
+
 Turn a regular node function into chainjs thunk.
 ```javascript
  function handler1 (param, callback) {
@@ -299,6 +344,9 @@ Chain()
 ```
 
 ### .context(ctx)
+
+**[API Reference](#api)**
+
 Binding "this" to specified ctx for all functions of each step of current chain. 
 ```js
 Chain(function () {
