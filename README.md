@@ -22,34 +22,34 @@ __use in node:__
 var Chain = require('chainjs')
 
 Chain(function (chain, data) {
-		// initialize
-		console.log(data) // --> {name: 'chainjs'}
+        // initialize
+        console.log(data) // --> {name: 'Chainjs'}
         chain.next();
     })
     .then(function (chain) {
-	    chain.nextTo('branchStep')
+        chain.nextTo('branchStep')
     })
     .then(function (chain, data) {
-	    var count = chain.data('count' || 0)
-	    if (count > 2) {
-		    chain.next('thenStep')
-	    } else {
-		    setTimeout(function () {
-			    chain.data('count', count ++).retry()
-		    })
-	    }	    
+        var count = chain.data('count' || 0)
+        if (count > 2) {
+            chain.next('thenStep')
+        } else {
+            setTimeout(function () {
+                chain.data('count', count ++).retry()
+            })
+        }       
     })
     .branch('branchStep', function () {
-	    chain.next('branchStep')
+        chain.next('branchStep')
     })
     .then(function (chain, from) {
-	    if (from == 'branchStep') {
-		    // do something
-	    }
-	    chain.next()
+        if (from == 'branchStep') {
+            // do something
+        }
+        chain.next()
     })
     .final(function (chain, data) {
-        console.log(data); // --> say hello
+       // do something when chain is ending
     })
     .start({name: 'Chainjs'})
 ```
@@ -59,11 +59,34 @@ Chain(function (chain, data) {
 ![diagram](http://switer.qiniudn.com/chain-flow.png)
 
 ## API
-Each step's handler has been passed the `chain` instance as the first argument
+Each step's handler has been passed the `chain` instance as the first argument.
+
+* Global API
+    - [Chain(func\[, func1, ..., funcN\])](#chainfunc-func1--funcn)
+    - [then(func\[, func1, ..., funcN\])](#thenfunc-func1--funcn)
+    - [some(func, \[, func1, ..., funcN\])](#somefunc-func1--funcn)
+    - [each(func\[, func1, ..., funcN\])](#eachfunc-func1--funcn)
+    - [branch(branchName, func)](#branchbranchname-func)
+    - [context(ctx)](#contextctx)
+    - [thunk(func)](#thunkfunc)
+    - [start(data\[, data1, ..., dataN\])](#startdata-data1--datan)
+    - [final(func)](#finalfinalhandler)
+
+* Instance API
+    - [next(data\[, data1, ..., dataN\])](#nextdata-data1--datan)
+    - [nextTo(branchName, data\[, data1, ..., dataN\])](#nexttobranchname-data-data1--datan)
+    - [wait(time, data\[, data1, ..., dataN\])](#waittime-data-data1--datan)
+    - [end(data\[, data1, ..., dataN\])](#enddata-data1--datan)
+    - [data(savingData)](#datasavingdata)
+    - [retry()](#retry)
+    - [destroy()](#destroy)
+    
+
 
 ### Chain(func, func1, ..., funcN)
-Instancing a chain, if arguments is not empty, it will be call .then() with arguments automatically.
-If first argument is type of `Array`, that argument will be passed as arguments.
+Create a Chain instance.
+* if arguments is not empty, it will be call **.then()** with arguments automatically.
+* else If first param is type of `Array`, then first param will be passed as arguments.
 ```javascript
 Chain(func /*, func1, ..., funcN*/);
 // or 
@@ -96,7 +119,7 @@ Chain(function (chain, data) {
 }).start('value')
 ```
 
-### .some(func, func1, ..., funcN)
+### .some(func, [func1, ..., funcN])
 Define a chain step, if a then step has multiple functions, it need any function of this step calling chain.next() only once to goto next step.
 ```javascript
 Chain(func).some(function (chain) {
@@ -288,62 +311,9 @@ Chain(function () {
 .start()
 ```
 
-## Testing
-Chainjs's test framework is [mocha](http://mochajs.org/), run below cli to run testing:
+## Run Testing
 ```bash
 npm test
-```
-
-## Example
-See [using chainjs control business logic flow example](https://github.com/switer/chainjs-flow-control-demo)
-
-```javascript
-var Chain = require('chainjs');
-var someStepCount = 0;
-var parallelCount = 0;
-
-Chain(function (chain) {
-        // save param
-        chain.data('chain:param', 'Chain initial step data');
-        chain.next({message: 'Next step'});
-    })
-    .some(function (chain, param) {
-        someStepCount ++;
-        chain.wait(2000, 'step is "some-1"');
-    }, function (chain, param) {
-        someStepCount ++;
-        chain.wait(1000, 'step is "some-2"');
-    })
-    .then(function (chain, msg) {
-        console.log(msg); // step is "some-2
-        // Step over when last step has one hander called
-        console.log(someStepCount); // 1
-        chain.next();
-    })
-    .then(function (chain) {
-        parallelCount ++;
-        chain.next();
-    }, function (chain) {
-        parallelCount ++;
-        chain.next();
-    }, function (chain) {
-        parallelCount ++;
-        chain.next();
-    })
-    .then(function (chain) {
-        // all handlers had been called in last step
-        console.log(parallelCount); // 3
-        chain.end();
-    })
-    .then(function (chain) {
-        //prev step had call chain.end(), so this step will be skiped
-    })
-    .final(function (chain) {
-        var param = chain.data('chain:param');
-        console.log(param); // "Chain initial step data"
-    })
-    .context(this)
-    .start(); // starting chain execute
 ```
 
 ## Change Log
