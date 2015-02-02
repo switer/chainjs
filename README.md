@@ -12,36 +12,51 @@ An asynchronous callback's flow controller, chaining async function callbacks. A
 ## Install
 
 ```bash
-npm install chainjs
+npm install chainjs --save
 ```
 
 ## Usage
-
+**Chainjs** can be used in [node.js](nodejs.org) or browser . 
 __use in node:__
 ```javascript
 var Chain = require('chainjs')
 
-Chain(function (chain) {
-        console.log('initialize');
-        chain.next('none');
+Chain(function (chain, data) {
+		// initialize
+		console.log(data) // --> {name: 'chainjs'}
+        chain.next();
     })
-    .some(function (chain) {
-        chain.wait(300, 'then go to next in step 1')
-    }, function (chain) {
-        chain.wait(200, 'then go to next in step 2')
-    }, function (chain) {
-        chain.wait(100, 'then go to next in step 3')
+    .then(function (chain) {
+	    chain.nextTo('branchStep')
     })
     .then(function (chain, data) {
-        console.log(data); // --> then go to next in step 3
-        chain.next('say hello');
+	    var count = chain.data('count' || 0)
+	    if (count > 2) {
+		    chain.next('thenStep')
+	    } else {
+		    setTimeout(function () {
+			    chain.data('count', count ++).retry()
+		    })
+	    }	    
+    })
+    .branch('branchStep', function () {
+	    chain.next('branchStep')
+    })
+    .then(function (chain, from) {
+	    if (from == 'branchStep') {
+		    // do something
+	    }
+	    chain.next()
     })
     .final(function (chain, data) {
         console.log(data); // --> say hello
-    });
+    })
+    .start({name: 'Chainjs'})
 ```
 
-![diagram](http://switer.qiniudn.com/chainjs2.png)
+**Look at the diagram of above chain-flow:**
+
+![diagram](http://switer.qiniudn.com/chain-flow.png)
 
 ## API
 Each step's handler has been passed the `chain` instance as the first argument
