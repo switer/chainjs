@@ -16,8 +16,10 @@ npm install chainjs --save
 ```
 
 ## Usage
-**Chainjs** can be used in [node.js](nodejs.org) or browser . 
-__use in node:__
+:two_men_holding_hands: :two_men_holding_hands: :two_men_holding_hands:
+
+**Chainjs** can be used in [node.js](nodejs.org) or browser . Use in node as below:
+
 ```javascript
 var Chain = require('chainjs')
 
