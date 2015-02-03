@@ -65,21 +65,21 @@ Chain(function (chain, data) {
 Each step's handler has been passed the `chain` instance as the first argument.
 
 * Global API
-    - [Chain()](#chainfunc-func1--funcn)
-    - [then()](#thenfunc-func1--funcn)
-    - [some()](#somefunc-func1--funcn)
-    - [each()](#eachfunc-func1--funcn)
+    - [Chain()](#chainfunc--funcn)
+    - [then()](#thenfunc--funcn)
+    - [some()](#somefunc--funcn)
+    - [each()](#eachfunc--funcn)
     - [branch()](#branchbranchname-func)
     - [context()](#contextctx)
     - [thunk()](#thunkfunc)
-    - [start()](#startdata-data1--datan)
+    - [start()](#startdata--datan)
     - [final()](#finalfinalhandler)
 
 * Instance API
-    - [next()](#nextdata-data1--datan)
-    - [nextTo()](#nexttobranchname-data-data1--datan)
-    - [wait()](#waittime-data-data1--datan)
-    - [end()](#enddata-data1--datan)
+    - [next()](#nextdata--datan)
+    - [nextTo()](#nexttobranchname-data--datan)
+    - [wait()](#waittime-data--datan)
+    - [end()](#enddata--datan)
     - [data()](#datasavingdata)
     - [retry()](#retry)
     - [destroy()](#destroy)
