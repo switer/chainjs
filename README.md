@@ -39,7 +39,7 @@ Chain(function (chain, data) {
             })
         }       
     })
-    .branch('branchStep', function () {
+    .branch('branchStep', function (chain) {
         chain.next('branchStep')
     })
     .then(function (chain, from) {
@@ -53,7 +53,8 @@ Chain(function (chain, data) {
     })
     .start({name: 'Chainjs'})
 ```
-
+:walking: :walking: :walking: :walking: :walking: :walking:
+-----------------------------------------------------------
 **Look at the diagram of above chain-flow:**
 
 ![diagram](http://switer.qiniudn.com/chain-flow.png)
@@ -83,7 +84,7 @@ Each step's handler has been passed the `chain` instance as the first argument.
 
 
 
-### Chain(func, func1, ..., funcN)
+### Chain(func, ..., funcN)
 
 **[API Reference](#api)**
 
@@ -91,12 +92,12 @@ Create a Chain instance.
 * if arguments is not empty, it will be call **.then()** with arguments automatically.
 * else If first param is type of `Array`, then first param will be passed as arguments.
 ```javascript
-Chain(func /*, func1, ..., funcN*/);
+Chain(func /*, ..., funcN*/);
 // or 
 Chain([func, func1, funcN])
 ```
 
-### .then(func, func1, ..., funcN)
+### .then(func, ..., funcN)
 
 **[API Reference](#api)**
 
@@ -106,9 +107,9 @@ Chain().then(funcA1, funcA2, funcA3).then(func1)
 ```
 If first argument is type of `Array`, that argument will be passed as arguments.
 ```javascript
-Chain.then([func1, func2, ..., funcN])
+Chain.then([func, ..., funcN])
 // equal to 
-Chain.then(func1, func2, ..., funcN)
+Chain.then(func, ..., funcN)
 ```
 
 
@@ -128,7 +129,7 @@ Chain(function (chain, data) {
 }).start('value')
 ```
 
-### .some(func, [func1, ..., funcN])
+### .some(func, ..., funcN)
 
 **[API Reference](#api)**
 
@@ -157,7 +158,7 @@ Chain.some([func1, func2, ..., funcN])
 Chain.some(func1, func2, ..., funcN)
 ```
 
-### .each(func, func1, ..., funcN)
+### .each(func, ..., funcN)
 
 **[API Reference](#api)**
 
@@ -172,7 +173,7 @@ Chain.each([func1, func2, ..., funcN])
 Chain.each(func1, func2, ..., funcN)
 ```
 
-### .start(data, data1, ..., dataN)
+### .start(data, ..., dataN)
 
 **[API Reference](#api)**
 
@@ -198,7 +199,7 @@ Chain(func).then(function (chain) {
 }).start();
 ```
 
-### .next(data, data1, ..., dataN)
+### .next(data, ..., dataN)
 
 **[API Reference](#api)**
 
@@ -236,7 +237,7 @@ Chain(function (chain) {
 }).start()
 ```
 
-### .nextTo(branchName, data, data1, ..., dataN)
+### .nextTo(branchName, data, ..., dataN)
 
 **[API Reference](#api)**
 
@@ -261,7 +262,7 @@ Chain(function (chain) {
 }).start()
 ```
 
-### .wait(time, data, data1, ..., dataN)
+### .wait(time, data, ..., dataN)
 
 **[API Reference](#api)**
 
@@ -271,7 +272,7 @@ Waiting some time then call next step.Just a shortcut of `setTimeout(function ()
 chain.wait(5000, data); // wait 5s then call next
 ```
 
-### .end(data, data1, ..., dataN)
+### .end(data, ..., dataN)
 
 **[API Reference](#api)**
 
