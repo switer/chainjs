@@ -65,22 +65,22 @@ Chain(function (chain, data) {
 Each step's handler has been passed the `chain` instance as the first argument.
 
 * Global API
-    - [Chain()](#chainfunc--funcn)
-    - [then()](#thenfunc--funcn)
-    - [some()](#somefunc--funcn)
-    - [each()](#eachfunc--funcn)
-    - [branch()](#branchbranchname-func)
-    - [context()](#contextctx)
-    - [thunk()](#thunkfunc)
-    - [start()](#startdata--datan)
-    - [final()](#finalfinalhandler)
+    - [Chain(func, ..., funcN)](#chainfunc--funcn)
+    - [then(func, ..., funcN)](#thenfunc--funcn)
+    - [some(func, ..., funcN)](#somefunc--funcn)
+    - [each(func, ..., funcN)](#eachfunc--funcn)
+    - [branch(branchName, func)](#branchbranchname-func)
+    - [context(ctx)](#contextctx)
+    - [thunk(func)](#thunkfunc)
+    - [start(data, ..., dataN)](#startdata--datan)
+    - [final(finalHandler)](#finalfinalhandler)
 
 * Instance API
-    - [next()](#nextdata--datan)
-    - [nextTo()](#nexttobranchname-data--datan)
-    - [wait()](#waittime-data--datan)
-    - [end()](#enddata--datan)
-    - [data()](#datasavingdata)
+    - [next(data, ..., dataN)](#nextdata--datan)
+    - [nextTo(branchName, data, ..., dataN)](#nexttobranchname-data--datan)
+    - [wait(time, data, ..., dataN)](#waittime-data--datan)
+    - [end(data, ..., dataN)](#enddata--datan)
+    - [data([key] [, value])](#datakey--data)
     - [retry()](#retry)
     - [destroy()](#destroy)
 
@@ -305,7 +305,7 @@ Chain(function (chain) {
 })
 ```
 
-### .data(savingData)
+### .data([key] [, value])
 
 :running: **[API Reference](#api)**
 
