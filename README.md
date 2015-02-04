@@ -80,7 +80,7 @@ Each step's handler has been passed the `chain` instance as the first argument.
     - [nextTo(branchName, data, ..., dataN)](#nexttobranchname-data--datan)
     - [wait(time, data, ..., dataN)](#waittime-data--datan)
     - [end(data, ..., dataN)](#enddata--datan)
-    - [data([key] [, value])](#datakey--data)
+    - [data([key] [, value])](#datakey--value)
     - [retry()](#retry)
     - [destroy()](#destroy)
 
