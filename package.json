@@ -1,13 +1,12 @@
 {
   "name": "chainjs",
   "version": "0.2.0",
-  "description": "Chainjs call each async function step by step, let async function callback fairily.",
+  "description": "Flow controller for the complex function logic.",
   "main": "chain.js",
   "scripts": {
     "test": "npm run coverall",
     "mocha": "mocha test/test.js",
-    "coverall": "mocha --require blanket --reporter mocha-lcov-reporter ./test/test.js | ./node_modules/coveralls/bin/coveralls.js",
-    "cover-html": "mocha --require blanket --reporter html-cov ./test/test.js > coverage.html"
+    "coverall": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec test/test.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "repository": {
     "type": "git",
@@ -28,20 +27,14 @@
     "url": "https://github.com/switer/chainjs/issues"
   },
   "devDependencies": {
-    "blanket": "^1.1.6",
     "chai": "^1.10.0",
     "colors": "^0.6.2",
-    "coveralls": "^2.11.2",
+    "coveralls": "^2.11.4",
     "gulp": "^3.9.0",
     "gulp-header": "^1.7.1",
     "gulp-watch": "^4.3.5",
     "gulp-webpack": "^1.5.0",
-    "mocha": "^2.1.0",
+    "mocha": "^2.3.4",
     "mocha-lcov-reporter": "0.0.1"
-  },
-  "config": {
-    "blanket": {
-      "pattern": "chain.js"
-    }
   }
 }
