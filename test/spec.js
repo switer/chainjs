@@ -555,6 +555,26 @@ module.exports = function (Chain, assert) {
                 })
                 .start()
             })
+            it('Data passing from pre step', function (done) {
+                var steps = ''
+                Chain(function (chain) {
+                    chain.next('A')
+                })
+                .each([function (chain, data) {
+                    assert.equal(data, 'A', 'data of pre step is not correct')
+                    chain.next('B')
+                }, function (chain, data) {
+                    assert.equal(data, 'B')
+                    chain.next('D')
+                }, function (chain, data) {
+                    assert.equal(data, 'D')
+                    chain.next()
+                }])
+                .then(function () {
+                    done()
+                })
+                .start()
+            })
         })
         /**
          *  comment
