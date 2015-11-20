@@ -129,20 +129,20 @@ Chain.prototype = {
         }
         var that = this
         if (node.items) {
+            var proto = that.constructor.prototype
             for (var index = 0; index < node.items.length; index++) {
                 var item = node.items[index]
                 var xArgs = args
-                var chainDummy = {
-                    __id: node.id,
-                    __index: index,
-                    __callee: item,
-                    __arguments: xArgs,
-
-                    state: that.state,
-                    props: that.props
-                }
-                chainDummy.__proto__ = that.__proto__
-                chainDummy.next = utils.bind(chainDummy.__proto__.next, chainDummy)
+                var ChainDummy = utils.create(function () {
+                    this.__id = node.id
+                    this.__index = index
+                    this.__callee = item
+                    this.__arguments = xArgs
+                    this.state = that.state
+                    this.props = that.props
+                }, proto)
+                var chainDummy = new ChainDummy()
+                chainDummy.next = utils.bind(proto.next, chainDummy)
 
                 xArgs.unshift(chainDummy)
                 item.apply(that.props._context, xArgs)
@@ -370,6 +370,16 @@ var utils = {
     },
     want: function (obj, type) {
         if (this.type(obj) != type) throw new Error('Want param ' + obj + ' type is a/an ' + type)
+    },
+    /**
+     * Create a class with specified proto
+     */
+    create: function (f, proto) {
+        function ctor() {}
+        ctor.prototype = proto
+        f.prototype = new ctor()
+        f.prototype.constructor = ctor
+        return f
     }
 }
 
