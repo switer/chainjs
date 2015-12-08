@@ -1,5 +1,5 @@
 /**
-* Chainjs v0.2.0
+* Chainjs v0.2.1
 * http://github.com/switer/chainjs
 *
 * (c) 2015 guankaishe
@@ -141,13 +141,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            else if (node.state._multiple && node.type == 'some') {
 	                if (!node.state._pending) return
-	                if (~node.state._dones.indexOf(this.__index)) node.state._dones.push(this.__index)
+	                if (~utils.indexOf(node.state._dones, this.__index)) node.state._dones.push(this.__index)
 	                if (node.state._dones.length >= 1) return
 	                node.state._pending = true
 	            } 
 	            else if (node.state._multiple) {
 	                if (!node.state._pending) return
-	                if (!~node.state._dones.indexOf(this.__index)) node.state._dones.push(this.__index)
+	                if (!~utils.indexOf(node.state._dones, this.__index)) node.state._dones.push(this.__index)
 	                if (node.state._dones.length != node.items.length) return
 	                node.state._pending = true
 	            }
@@ -368,7 +368,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return id
 	    },
 	    isLast: function (id) {
-	        return this._link.indexOf(id) === this._link.length - 1
+	        return utils.indexOf(this._link, id) === this._link.length - 1
 	    },
 	    first: function() {
 	        return this._map[this._link[0]]
@@ -377,7 +377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this._map[id]
 	    },
 	    next: function(id) {
-	        var cursor = this._link.indexOf(id) + 1
+	        var cursor = utils.indexOf(this._link, id) + 1
 	        return this._map[this._link[cursor]]
 	    },
 	    getByProp: function (prop, value) {
@@ -393,7 +393,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return dest
 	    },
 	    isNextTo: function (nextId, preId) {
-	        return this._link.indexOf(nextId) > this._link.indexOf(preId)
+	        return utils.indexOf(this._link, nextId) > utils.indexOf(this._link, preId)
 	    }
 	}
 
@@ -492,6 +492,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        f.prototype = new Ctor()
 	        f.prototype.constructor = Ctor
 	        return f
+	    },
+	    indexOf: function (arr, tar) {
+	        if (arr.indexOf) return arr.indexOf(tar)
+	        else {
+	            var i = -1
+	            this.some(arr, function (item, index) {
+	                if (item === tar) {
+	                    i = index
+	                    return true
+	                }
+	            })
+	            return i
+	        }
 	    }
 	}
 

@@ -78,13 +78,13 @@ Chain.prototype = {
             }
             else if (node.state._multiple && node.type == 'some') {
                 if (!node.state._pending) return
-                if (~node.state._dones.indexOf(this.__index)) node.state._dones.push(this.__index)
+                if (~utils.indexOf(node.state._dones, this.__index)) node.state._dones.push(this.__index)
                 if (node.state._dones.length >= 1) return
                 node.state._pending = true
             } 
             else if (node.state._multiple) {
                 if (!node.state._pending) return
-                if (!~node.state._dones.indexOf(this.__index)) node.state._dones.push(this.__index)
+                if (!~utils.indexOf(node.state._dones, this.__index)) node.state._dones.push(this.__index)
                 if (node.state._dones.length != node.items.length) return
                 node.state._pending = true
             }
@@ -305,7 +305,7 @@ LinkNodes.prototype = {
         return id
     },
     isLast: function (id) {
-        return this._link.indexOf(id) === this._link.length - 1
+        return utils.indexOf(this._link, id) === this._link.length - 1
     },
     first: function() {
         return this._map[this._link[0]]
@@ -314,7 +314,7 @@ LinkNodes.prototype = {
         return this._map[id]
     },
     next: function(id) {
-        var cursor = this._link.indexOf(id) + 1
+        var cursor = utils.indexOf(this._link, id) + 1
         return this._map[this._link[cursor]]
     },
     getByProp: function (prop, value) {
@@ -330,7 +330,7 @@ LinkNodes.prototype = {
         return dest
     },
     isNextTo: function (nextId, preId) {
-        return this._link.indexOf(nextId) > this._link.indexOf(preId)
+        return utils.indexOf(this._link, nextId) > utils.indexOf(this._link, preId)
     }
 }
 
